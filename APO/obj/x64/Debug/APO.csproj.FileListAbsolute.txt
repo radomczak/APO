@@ -30,3 +30,6 @@ C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.CopyComplete
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.exe
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.pdb
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.AssemblyReference.cache
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetThresholdForm.resources
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetMatrixSizeForm.resources
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.CustomMatrixForm.resources

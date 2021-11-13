@@ -151,5 +151,26 @@ namespace APO {
             bitmapData = null;
             bitmap = null;
         }
+
+        public void RGBtoGray()
+        {
+            int R;
+            int G;
+            int B;
+            int v;
+            for (int i = 0; i < width; ++i)
+            {
+                for (int j = 0; j < height; ++j)
+                {
+                    R = this[i, j].R;
+                    G = this[i, j].G;
+                    B = this[i, j].B;
+                    v = (int)((double)R * 0.3d + (double)G * 0.6d + (double)B * 0.1d);
+                    Color newPixel = Color.FromArgb(v, v, v);
+                    this[i, j] = newPixel;
+                }
+            }
+        }
+
     }
 }

@@ -12,7 +12,7 @@ namespace APO
 {
     public partial class PreviewWithSlider : Form
     {
-        public enum Operations { Binarization, Thresholding, Posterize, StretchP1P2 };
+        public enum Operations { Binarization, Thresholding, Posterize, StretchP1P2, Canny };
 
         private FormWithImage formWithImage;
         private FastBitmap originalImage;
@@ -59,6 +59,7 @@ namespace APO
                     increaseButton.Visible = false;
                     decreaseButton.Visible = false;
                     break;
+                case Operations.Canny:
                 case Operations.Thresholding:
                 case Operations.StretchP1P2:
                     fromLabel.Visible = true;
@@ -139,6 +140,8 @@ namespace APO
                     break;
                 case Operations.StretchP1P2:
                     newImage = ImageProcessor.ProcessAndReturnImage(formWithImage, ImageProcessor.Operations.StretchP1P2, from, to);
+                    break;
+                case Operations.Canny:
                     break;
             }
         }

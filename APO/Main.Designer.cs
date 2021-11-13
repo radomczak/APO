@@ -56,14 +56,16 @@ namespace APO
             this.progToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redukcjaPoziomówSzarościToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rozciąganieHistogramuZZakresemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.obrazToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.duplikujToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filtryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wygładzanieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wyostrzanieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detekcjaKrawędziToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specjalnaDetekacjaKrawędziToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.obrazToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplikujToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.medianowyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -291,6 +293,52 @@ namespace APO
             this.rozciąganieHistogramuZZakresemToolStripMenuItem.Text = "Rozciąganie histogramu z zakresem";
             this.rozciąganieHistogramuZZakresemToolStripMenuItem.Click += new System.EventHandler(this.ąganieHistogramuZZakresemToolStripMenuItem_Click);
             // 
+            // filtryToolStripMenuItem
+            // 
+            this.filtryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.wygładzanieToolStripMenuItem,
+            this.wyostrzanieToolStripMenuItem,
+            this.detekcjaKrawędziToolStripMenuItem,
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem,
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem,
+            this.medianowyToolStripMenuItem});
+            this.filtryToolStripMenuItem.Enabled = false;
+            this.filtryToolStripMenuItem.Name = "filtryToolStripMenuItem";
+            this.filtryToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.filtryToolStripMenuItem.Text = "Filtry";
+            // 
+            // wygładzanieToolStripMenuItem
+            // 
+            this.wygładzanieToolStripMenuItem.Enabled = false;
+            this.wygładzanieToolStripMenuItem.Name = "wygładzanieToolStripMenuItem";
+            this.wygładzanieToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.wygładzanieToolStripMenuItem.Text = "Wygładzanie";
+            this.wygładzanieToolStripMenuItem.Click += new System.EventHandler(this.wygładzanieToolStripMenuItem_Click);
+            // 
+            // wyostrzanieToolStripMenuItem
+            // 
+            this.wyostrzanieToolStripMenuItem.Enabled = false;
+            this.wyostrzanieToolStripMenuItem.Name = "wyostrzanieToolStripMenuItem";
+            this.wyostrzanieToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.wyostrzanieToolStripMenuItem.Text = "Wyostrzanie";
+            this.wyostrzanieToolStripMenuItem.Click += new System.EventHandler(this.wyostrzanieToolStripMenuItem_Click);
+            // 
+            // detekcjaKrawędziToolStripMenuItem
+            // 
+            this.detekcjaKrawędziToolStripMenuItem.Enabled = false;
+            this.detekcjaKrawędziToolStripMenuItem.Name = "detekcjaKrawędziToolStripMenuItem";
+            this.detekcjaKrawędziToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.detekcjaKrawędziToolStripMenuItem.Text = "Kierunkowa detekcja krawędzi";
+            this.detekcjaKrawędziToolStripMenuItem.Click += new System.EventHandler(this.detekcjaKrawędziToolStripMenuItem_Click);
+            // 
+            // specjalnaDetekacjaKrawędziToolStripMenuItem
+            // 
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = false;
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Name = "specjalnaDetekacjaKrawędziToolStripMenuItem";
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Text = "Specjalna detekacja krawędzi (Prewitt)";
+            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziToolStripMenuItem_Click);
+            // 
             // obrazToolStripMenuItem
             // 
             this.obrazToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -315,49 +363,21 @@ namespace APO
             this.infoToolStripMenuItem.Text = "Info";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
             // 
-            // filtryToolStripMenuItem
+            // specjalnaDetekacjaKrawędziCannyToolStripMenuItem
             // 
-            this.filtryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.wygładzanieToolStripMenuItem,
-            this.wyostrzanieToolStripMenuItem,
-            this.detekcjaKrawędziToolStripMenuItem,
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem});
-            this.filtryToolStripMenuItem.Enabled = false;
-            this.filtryToolStripMenuItem.Name = "filtryToolStripMenuItem";
-            this.filtryToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.filtryToolStripMenuItem.Text = "Filtry";
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = false;
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Name = "specjalnaDetekacjaKrawędziCannyToolStripMenuItem";
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Text = "Specjalna detekacja krawędzi (Canny)";
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem_Click);
             // 
-            // wygładzanieToolStripMenuItem
+            // medianowyToolStripMenuItem
             // 
-            this.wygładzanieToolStripMenuItem.Enabled = false;
-            this.wygładzanieToolStripMenuItem.Name = "wygładzanieToolStripMenuItem";
-            this.wygładzanieToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.wygładzanieToolStripMenuItem.Text = "Wygładzanie";
-            this.wygładzanieToolStripMenuItem.Click += new System.EventHandler(this.wygładzanieToolStripMenuItem_Click);
-            // 
-            // wyostrzanieToolStripMenuItem
-            // 
-            this.wyostrzanieToolStripMenuItem.Enabled = false;
-            this.wyostrzanieToolStripMenuItem.Name = "wyostrzanieToolStripMenuItem";
-            this.wyostrzanieToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.wyostrzanieToolStripMenuItem.Text = "Wyostrzanie";
-            this.wyostrzanieToolStripMenuItem.Click += new System.EventHandler(this.wyostrzanieToolStripMenuItem_Click);
-            // 
-            // detekcjaKrawędziToolStripMenuItem
-            // 
-            this.detekcjaKrawędziToolStripMenuItem.Enabled = false;
-            this.detekcjaKrawędziToolStripMenuItem.Name = "detekcjaKrawędziToolStripMenuItem";
-            this.detekcjaKrawędziToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.detekcjaKrawędziToolStripMenuItem.Text = "Kierunkowa detekcja krawędzi";
-            this.detekcjaKrawędziToolStripMenuItem.Click += new System.EventHandler(this.detekcjaKrawędziToolStripMenuItem_Click);
-            // 
-            // specjalnaDetekacjaKrawędziToolStripMenuItem
-            // 
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = false;
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Name = "specjalnaDetekacjaKrawędziToolStripMenuItem";
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Text = "Specjalna detekacja krawędzi";
-            this.specjalnaDetekacjaKrawędziToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziToolStripMenuItem_Click);
+            this.medianowyToolStripMenuItem.Enabled = false;
+            this.medianowyToolStripMenuItem.Name = "medianowyToolStripMenuItem";
+            this.medianowyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.medianowyToolStripMenuItem.Text = "Medianowy";
+            this.medianowyToolStripMenuItem.Click += new System.EventHandler(this.medianowyToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -413,6 +433,8 @@ namespace APO
         private System.Windows.Forms.ToolStripMenuItem wyostrzanieToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem detekcjaKrawędziToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem specjalnaDetekacjaKrawędziToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem specjalnaDetekacjaKrawędziCannyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem medianowyToolStripMenuItem;
     }
 }
 

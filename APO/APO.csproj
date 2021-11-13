@@ -70,11 +70,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMatrixForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomMatrixForm.Designer.cs">
+      <DependentUpon>CustomMatrixForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMask3x3.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMask3x3.Designer.cs">
       <DependentUpon>FormMask3x3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GetMatrixSizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetMatrixSizeForm.Designer.cs">
+      <DependentUpon>GetMatrixSizeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GetThresholdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetThresholdForm.Designer.cs">
+      <DependentUpon>GetThresholdForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="FormWithLUTTableRGB.cs">
@@ -124,6 +142,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CustomMatrixForm.resx">
+      <DependentUpon>CustomMatrixForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMask3x3.resx">
       <DependentUpon>FormMask3x3.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,6 +162,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormWithLUTTableRGB.resx">
       <DependentUpon>FormWithLUTTableRGB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetMatrixSizeForm.resx">
+      <DependentUpon>GetMatrixSizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetThresholdForm.resx">
+      <DependentUpon>GetThresholdForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

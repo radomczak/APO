@@ -8,12 +8,13 @@ using Emgu.CV;
 using System.Windows.Forms;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using Emgu.CV.CvEnum;
 
 namespace APO
 {
     class ImageProcessor
     {
-        public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, Smooth, Sharpen, DetectEdges, SpecDetectEdges };
+        public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, Smooth, Sharpen, DetectEdges, SpecDetectEdgesP, SpecDetectEdgesC, Median };
 
         public static void ProcessImage(FormWithImage form, Operations operation)
         {
@@ -37,8 +38,14 @@ namespace APO
                 case Operations.DetectEdges:
                     DetectEdges(form);
                     break;
-                case Operations.SpecDetectEdges:
-                    SpecDetectEdges(form);
+                case Operations.SpecDetectEdgesP:
+                    SpecDetectEdgesP(form);
+                    break;
+                case Operations.SpecDetectEdgesC:
+                    SpecDetectEdgesC(form);
+                    break;
+                case Operations.Median:
+                    MedianFilter(form);
                     break;
             }
         }
@@ -443,16 +450,52 @@ namespace APO
             FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.DetectEdges);
             if (formMask.ShowDialog() == DialogResult.OK)
             {
+                form.RGBtoGray();
                 applyFilterToForm(formMask, form);
             }
         }
 
-        private static void SpecDetectEdges(FormWithImage form)
+        private static void SpecDetectEdgesP(FormWithImage form)
         {
             FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.SpecDetectEdges);
             if (formMask.ShowDialog() == DialogResult.OK)
             {
+                form.RGBtoGray();
                 applyFilterToForm(formMask, form);
+            }
+        }
+
+        private static void SpecDetectEdgesC(FormWithImage form)
+        {
+
+            GetThresholdForm thresholdForm = new GetThresholdForm();
+            if (thresholdForm.ShowDialog() == DialogResult.OK)
+            {
+                int[] threshold = thresholdForm.GetThreshold();
+                form.RGBtoGray();
+                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                bmp.Unlock();
+                var img = bmp.Bitmap.ToImage<Gray, byte>();
+                bmp.Lock(); ;
+                CvInvoke.Canny(img, img, threshold[0], threshold[1]);
+                bmp = new FastBitmap(img.ToBitmap());
+                form.FastBitmap = bmp;
+            }
+        }
+
+        private static void MedianFilter(FormWithImage form)
+        {
+
+            CustomMatrixForm customMatrix = new CustomMatrixForm();
+            if (customMatrix.ShowDialog() == DialogResult.OK)
+            {
+                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                int size = customMatrix.getSize();
+                BorderType type = customMatrix.GetBorderType();
+                bool color = !form.IsMono;
+
+                bmp = applyMedianBlurToFastBitmap(bmp, size, type, color);
+                form.FastBitmap = bmp;
             }
         }
 
@@ -491,6 +534,58 @@ namespace APO
                 ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
                 Point anchor = new Point(-1, -1);
                 CvInvoke.Filter2D(img, img, kernelF, anchor);
+                return new FastBitmap(img.ToBitmap());
+            }
+        }
+
+        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type ,Boolean color)
+        {
+            if (color)
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Rgb, byte>();
+                bitmap.Lock();
+                Image<Gray, byte>[] channels = img.Split();
+                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+                Point anchor = new Point(-1, -1);
+                CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor, 0, type);
+                CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor, 0, type);
+                CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+                return new FastBitmap(img.ToBitmap());
+            }
+            else
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Gray, byte>();
+                bitmap.Lock();
+                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+                Point anchor = new Point(-1, -1);
+                CvInvoke.Filter2D(img, img, kernelF, anchor, 0, type);
+                return new FastBitmap(img.ToBitmap());
+            }
+        }
+
+        private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size,BorderType type, Boolean color)
+        {
+            if (color)
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Rgb, byte>();
+                bitmap.Lock();
+                Image<Gray, byte>[] channels = img.Split();
+                CvInvoke.MedianBlur(channels[0], channels[0], size);
+                CvInvoke.MedianBlur(channels[1], channels[1], size);
+                CvInvoke.MedianBlur(channels[2], channels[2], size);
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+                return new FastBitmap(img.ToBitmap());
+            }
+            else
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Gray, byte>();
+                bitmap.Lock();
+                CvInvoke.MedianBlur(img, img, size);
                 return new FastBitmap(img.ToBitmap());
             }
         }

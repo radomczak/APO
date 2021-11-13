@@ -66,6 +66,8 @@ namespace APO
             wyostrzanieToolStripMenuItem.Enabled = true;
             detekcjaKrawędziToolStripMenuItem.Enabled = true;
             specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = true;
+            specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = true;
+            medianowyToolStripMenuItem.Enabled = true;
         }
 
         public void DissableButtonsIfNeeded()
@@ -101,6 +103,8 @@ namespace APO
                 wyostrzanieToolStripMenuItem.Enabled = false;
                 detekcjaKrawędziToolStripMenuItem.Enabled = false;
                 specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = false;
+                specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = false;
+                medianowyToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -271,7 +275,19 @@ namespace APO
 
         private void specjalnaDetekacjaKrawędziToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.SpecDetectEdges);
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.SpecDetectEdgesP);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        private void specjalnaDetekacjaKrawędziCannyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.SpecDetectEdgesC);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        private void medianowyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Median);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
     }

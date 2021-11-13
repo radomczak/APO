@@ -131,5 +131,11 @@ namespace APO
             }
             isMono = result;
         }
+
+        public void RGBtoGray()
+        {
+            fastBitmap.RGBtoGray();
+            isMono = true;
+        }
     }
 }
