@@ -14,21 +14,36 @@ namespace APO
 {
     public partial class CustomMatrixForm : Form
     {
-        private int size;
+        private int matrixSize;
         private float[,] kernel;
         private BorderType borderType;
-        
+        private int borderConstant;
 
         public CustomMatrixForm()
         {
             InitializeComponent();
         }
 
+        public int MatrixSize
+        {
+            get { return matrixSize; }
+        }
+
+        public float[,] Kernel
+        {
+            get { return kernel; }
+        }
+
+        public int BorderConstant
+        {
+            get { return borderConstant; }
+        }
+
 
 
         private void InitializeMatrix()
         {
-            switch(size)
+            switch(matrixSize)
             {
                 case 3:
                     Prepare3x3();
@@ -496,16 +511,16 @@ namespace APO
             switch(i)
             {
                 case 0:
-                    size = 3;
+                    matrixSize = 3;
                     break;
                 case 1:
-                    size = 5;
+                    matrixSize = 5;
                     break;
                 case 2:
-                    size = 7;
+                    matrixSize = 7;
                     break;
                 case 3:
-                    size = 9;
+                    matrixSize = 9;
                     break;
             }
             InitializeMatrix();
@@ -517,13 +532,33 @@ namespace APO
             switch(x)
             {
                 case 0:
-                    borderType = BorderType.Replicate;
+                    borderType = BorderType.Constant;
+                    GetMatrixSizeForm form = new GetMatrixSizeForm("Wartość:");
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        borderConstant = form.GetSize();
+                    }
                     break;
                 case 1:
-                    borderType = BorderType.Reflect;
+                    borderType = BorderType.Replicate;
                     break;
                 case 2:
+                    borderType = BorderType.Reflect;
+                    break;
+                case 3:
                     borderType = BorderType.Wrap;
+                    break;
+                case 4:
+                    borderType = BorderType.Reflect101;
+                    break;
+                case 5:
+                    borderType = BorderType.Transparent;
+                    break;
+                case 6:
+                    borderType = BorderType.Isolated;
+                    break;
+                case 7:
+                    borderType = BorderType.Default;
                     break;
             }
 
@@ -710,8 +745,8 @@ namespace APO
 
         private void OK_Click(object sender, EventArgs e)
         {
-            kernel = new float[size, size];
-            updateKernelForSize(size);
+            kernel = new float[matrixSize, matrixSize];
+            updateKernelForSize(matrixSize);
         }
 
         private float ParseOrZero(string s)
@@ -741,7 +776,7 @@ namespace APO
 
         public int getSize()
         {
-            return size;
+            return matrixSize;
         }
     }
 }

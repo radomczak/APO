@@ -503,14 +503,27 @@ namespace APO
         {
             FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
             float[,] kernel = mask.Mask;
+            BorderType type = mask.BorderType;
+            int i = mask.BorderConstant;
+
             if (form.IsMono)
-                bmp = applyKernelToFastBitmap(kernel, bmp, false);
+            {
+                if (mask.BorderType.Equals(BorderType.Constant))
+                    bmp = applyKernelToFastBitmap(kernel, bmp, type, i, false);
+                else
+                    bmp = applyKernelToFastBitmap(kernel, bmp, type, false);
+            }
             else
-                bmp = applyKernelToFastBitmap(kernel, bmp, true);
+            {
+                if (mask.BorderType.Equals(BorderType.Constant))
+                    bmp = applyKernelToFastBitmap(kernel, bmp, type, i, true);
+                else
+                    bmp = applyKernelToFastBitmap(kernel, bmp, type, true);
+            }
             form.FastBitmap = bmp;
         }
 
-        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, Boolean color)
+        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, bool color)
         {
             if(color)
             {
@@ -538,7 +551,7 @@ namespace APO
             }
         }
 
-        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type ,Boolean color)
+        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type , bool color)
         {
             if (color)
             {
@@ -566,7 +579,38 @@ namespace APO
             }
         }
 
-        private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size,BorderType type, Boolean color)
+        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type, int i, bool color)
+        {
+            if (color)
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Rgb, byte>();
+                bitmap.Lock();
+                Image<Gray, byte>[] channels = img.Split();
+                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+                Point anchor = new Point(-1, -1);
+                CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor, 0, type);
+                CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor, 0, type);
+                CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+                CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
+                return new FastBitmap(img.ToBitmap());
+            }
+            else
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Gray, byte>();
+                bitmap.Lock();
+                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+                Point anchor = new Point(-1, -1);
+                CvInvoke.Filter2D(img, img, kernelF, anchor, 0, type);
+                CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
+                CvInvoke.Imshow("z", img);
+                return new FastBitmap(img.Mat.ToBitmap());
+            }
+        }
+
+        private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size,BorderType type, bool color)
         {
             if (color)
             {

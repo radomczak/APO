@@ -875,9 +875,14 @@ namespace APO
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
+            "Stała",
             "Replikacja",
             "Odbicie",
-            "Zawinięcie"});
+            "Zawinięcie",
+            "Odbicie 101",
+            "Przezroczystość",
+            "Izolacja",
+            "Standardowa"});
             this.comboBox2.Location = new System.Drawing.Point(167, 30);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 21);

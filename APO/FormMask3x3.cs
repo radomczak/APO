@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Emgu.CV.CvEnum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,9 +23,11 @@ namespace APO
         }
 
         private float[,] mask;
-        float divisor;
-        Operations operation;
-        bool divide = false;
+        private float divisor;
+        private Operations operation;
+        private bool divide = false;
+        private BorderType borderType;
+        private int borderConstant;
 
         public float[,] Mask
         {
@@ -34,6 +37,16 @@ namespace APO
         public float Divisor
         {
             get { return divisor; }
+        }
+
+        public BorderType BorderType
+        {
+            get { return borderType; }
+        }
+
+        public int BorderConstant
+        {
+            get { return borderConstant; }
         }
 
         public FormMask3x3(Operations operation)
@@ -542,6 +555,43 @@ namespace APO
             textBox21.Enabled = false;
             textBox21.Enabled = false;
             textBox22.Enabled = false;
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int x = comboBox2.SelectedIndex;
+            switch (x)
+            {
+                case 0:
+                    borderType = BorderType.Constant;
+                    GetMatrixSizeForm form = new GetMatrixSizeForm("Wartość:");
+                    if(form.ShowDialog() == DialogResult.OK)
+                    {
+                        borderConstant = form.GetSize();
+                    }
+                    break;
+                case 1:
+                    borderType = BorderType.Replicate;
+                    break;
+                case 2:
+                    borderType = BorderType.Reflect;
+                    break;
+                case 3:
+                    borderType = BorderType.Wrap;
+                    break;
+                case 4:
+                    borderType = BorderType.Reflect101;
+                    break;
+                case 5:
+                    borderType = BorderType.Transparent;
+                    break;
+                case 6:
+                    borderType = BorderType.Isolated;
+                    break;
+                case 7:
+                    borderType = BorderType.Default;
+                    break;
+            }
         }
     }
 }

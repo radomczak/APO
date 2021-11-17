@@ -19,6 +19,12 @@ namespace APO
             InitializeComponent();
         }
 
+        public GetMatrixSizeForm(String s)
+        {
+            InitializeComponent();
+            label1.Text = s;
+        }
+
         private void decrease_Click(object sender, EventArgs e)
         {
             size--;
