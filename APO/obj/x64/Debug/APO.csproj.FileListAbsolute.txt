@@ -33,3 +33,5 @@ C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.AssemblyReferen
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetThresholdForm.resources
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetMatrixSizeForm.resources
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.CustomMatrixForm.resources
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.PrewittForm.resources
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.SelectFormForm.resources

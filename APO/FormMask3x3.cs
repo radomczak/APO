@@ -577,18 +577,15 @@ namespace APO
                     borderType = BorderType.Reflect;
                     break;
                 case 3:
-                    borderType = BorderType.Wrap;
-                    break;
-                case 4:
                     borderType = BorderType.Reflect101;
                     break;
-                case 5:
+                case 4:
                     borderType = BorderType.Transparent;
                     break;
-                case 6:
+                case 5:
                     borderType = BorderType.Isolated;
                     break;
-                case 7:
+                case 6:
                     borderType = BorderType.Default;
                     break;
             }

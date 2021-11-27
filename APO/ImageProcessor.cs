@@ -14,7 +14,10 @@ namespace APO
 {
     class ImageProcessor
     {
-        public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, Smooth, Sharpen, DetectEdges, SpecDetectEdgesP, SpecDetectEdgesC, Median };
+        public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, 
+            Smooth, Sharpen, DetectEdges, SpecDetectEdgesP, SpecDetectEdgesC, Median,
+            AND, OR, XOR, Otsu
+        };
 
         public static void ProcessImage(FormWithImage form, Operations operation)
         {
@@ -46,6 +49,25 @@ namespace APO
                     break;
                 case Operations.Median:
                     MedianFilter(form);
+                    break;
+                case Operations.Otsu:
+                    Otsu(form);
+                    break;
+            }
+        }
+
+        public static void ProcessImage(FormWithImage form1, FormWithImage form2, Operations operation)
+        {
+            switch (operation)
+            {
+                case Operations.AND:
+                    ANDOperator(form1,form2);
+                    break;
+                case Operations.OR:
+                    OROperator(form1, form2);
+                    break;
+                case Operations.XOR:
+                    XOROperator(form1, form2);
                     break;
             }
         }
@@ -457,11 +479,30 @@ namespace APO
 
         private static void SpecDetectEdgesP(FormWithImage form)
         {
-            FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.SpecDetectEdges);
-            if (formMask.ShowDialog() == DialogResult.OK)
+            PrewittForm prewittForm = new PrewittForm();
+            if (prewittForm.ShowDialog() == DialogResult.OK)
             {
                 form.RGBtoGray();
-                applyFilterToForm(formMask, form);
+                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                bmp.Unlock();
+                var img = bmp.Bitmap.ToImage<Gray, byte>();
+                bmp.Lock();
+
+                ConvolutionKernelF kernelF1 = new ConvolutionKernelF(prewittForm.Mask1);
+                ConvolutionKernelF kernelF2 = new ConvolutionKernelF(prewittForm.Mask2);
+                BorderType type = prewittForm.BorderType;
+                Point anchor = new Point(-1, -1);
+                CvInvoke.GaussianBlur(img, img, new Size(3, 3), 0);
+
+                var img1 = new Image<Gray, byte>(img.Size);
+                var img2 = new Image<Gray, byte>(img.Size);
+
+                CvInvoke.Filter2D(img, img1, kernelF1, anchor,0, type);
+                CvInvoke.Filter2D(img, img2, kernelF2, anchor,0, type);
+
+                img = img1 + img2;
+                bmp = new FastBitmap(img.ToBitmap());
+                form.FastBitmap = bmp;
             }
         }
 
@@ -476,7 +517,7 @@ namespace APO
                 FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
                 bmp.Unlock();
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
-                bmp.Lock(); ;
+                bmp.Lock();
                 CvInvoke.Canny(img, img, threshold[0], threshold[1]);
                 bmp = new FastBitmap(img.ToBitmap());
                 form.FastBitmap = bmp;
@@ -493,9 +534,13 @@ namespace APO
                 int size = customMatrix.getSize();
                 BorderType type = customMatrix.GetBorderType();
                 bool color = !form.IsMono;
-
-                bmp = applyMedianBlurToFastBitmap(bmp, size, type, color);
+                int i = customMatrix.BorderConstant;
+                if (type.Equals(BorderType.Constant))
+                    bmp = applyMedianBlurToFastBitmap(bmp, size, type, i, color);
+                else
+                    bmp = applyMedianBlurToFastBitmap(bmp, size, type, color);
                 form.FastBitmap = bmp;
+                form.Resize();
             }
         }
 
@@ -521,6 +566,7 @@ namespace APO
                     bmp = applyKernelToFastBitmap(kernel, bmp, type, true);
             }
             form.FastBitmap = bmp;
+            form.Resize();
         }
 
         private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, bool color)
@@ -594,7 +640,7 @@ namespace APO
                 CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
                 CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
                 CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
-                return new FastBitmap(img.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap());
             }
             else
             {
@@ -605,13 +651,13 @@ namespace APO
                 Point anchor = new Point(-1, -1);
                 CvInvoke.Filter2D(img, img, kernelF, anchor, 0, type);
                 CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
-                CvInvoke.Imshow("z", img);
                 return new FastBitmap(img.Mat.ToBitmap());
             }
         }
 
         private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size,BorderType type, bool color)
         {
+            int borderSize = size / 2;
             if (color)
             {
                 bitmap.Unlock();
@@ -621,8 +667,11 @@ namespace APO
                 CvInvoke.MedianBlur(channels[0], channels[0], size);
                 CvInvoke.MedianBlur(channels[1], channels[1], size);
                 CvInvoke.MedianBlur(channels[2], channels[2], size);
+                CvInvoke.CopyMakeBorder(channels[0], channels[0], borderSize, borderSize, borderSize, borderSize, type);
+                CvInvoke.CopyMakeBorder(channels[1], channels[1], borderSize, borderSize, borderSize, borderSize, type);
+                CvInvoke.CopyMakeBorder(channels[2], channels[2], borderSize, borderSize, borderSize, borderSize, type);
                 CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
-                return new FastBitmap(img.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap());
             }
             else
             {
@@ -630,8 +679,106 @@ namespace APO
                 var img = bitmap.Bitmap.ToImage<Gray, byte>();
                 bitmap.Lock();
                 CvInvoke.MedianBlur(img, img, size);
-                return new FastBitmap(img.ToBitmap());
+                CvInvoke.CopyMakeBorder(img, img, borderSize, borderSize, borderSize, borderSize, type);
+                return new FastBitmap(img.Mat.ToBitmap());
             }
+        }
+
+        private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size, BorderType type, int i, bool color)
+        {
+            int borderSize = size / 2;
+            if (color)
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Rgb, byte>();
+                bitmap.Lock();
+                Image<Gray, byte>[] channels = img.Split();
+                CvInvoke.MedianBlur(channels[0], channels[0], size);
+                CvInvoke.MedianBlur(channels[1], channels[1], size);
+                CvInvoke.MedianBlur(channels[2], channels[2], size);
+                CvInvoke.CopyMakeBorder(channels[0], channels[0], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
+                CvInvoke.CopyMakeBorder(channels[1], channels[1], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
+                CvInvoke.CopyMakeBorder(channels[2], channels[2], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+                return new FastBitmap(img.Mat.ToBitmap());
+            }
+            else
+            {
+                bitmap.Unlock();
+                var img = bitmap.Bitmap.ToImage<Gray, byte>();
+                bitmap.Lock();
+                CvInvoke.MedianBlur(img, img, size);
+                CvInvoke.CopyMakeBorder(img, img, borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
+                return new FastBitmap(img.Mat.ToBitmap());
+            }
+        }
+
+        private static void ANDOperator(FormWithImage form1, FormWithImage form2)
+        {
+            FastBitmap bmp1 = form1.FastBitmap;
+            FastBitmap bmp2 = form2.FastBitmap;
+            if(form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
+            {
+                bmp1.Unlock();
+                var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
+                bmp1.Lock();
+
+                bmp2.Unlock();
+                var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
+                bmp2.Lock();
+
+                CvInvoke.BitwiseAnd(img1, img2, img1);
+                form1.FastBitmap = new FastBitmap(img1.ToBitmap());
+            }
+        }
+
+        private static void OROperator(FormWithImage form1, FormWithImage form2)
+        {
+            FastBitmap bmp1 = form1.FastBitmap;
+            FastBitmap bmp2 = form2.FastBitmap;
+            if (form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
+            {
+                bmp1.Unlock();
+                var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
+                bmp1.Lock();
+
+                bmp2.Unlock();
+                var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
+                bmp2.Lock();
+
+                CvInvoke.BitwiseOr(img1, img2, img1);
+                form1.FastBitmap = new FastBitmap(img1.ToBitmap());
+            } 
+        }
+
+        private static void XOROperator(FormWithImage form1, FormWithImage form2)
+        {
+            FastBitmap bmp1 = form1.FastBitmap;
+            FastBitmap bmp2 = form2.FastBitmap;
+            if (form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
+            {
+                bmp1.Unlock();
+                var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
+                bmp1.Lock();
+
+                bmp2.Unlock();
+                var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
+                bmp2.Lock();
+
+                CvInvoke.BitwiseXor(img1, img2, img1);
+                form1.FastBitmap = new FastBitmap(img1.ToBitmap());
+            }
+        }
+        private static void Otsu(FormWithImage form)
+        {
+            FastBitmap bmp = form.FastBitmap;
+            bmp.Unlock();
+            var img = bmp.Bitmap.ToImage<Gray, byte>();
+            bmp.Lock();
+
+            CvInvoke.Threshold(img, img, 120, 255, ThresholdType.Otsu);
+
+            form.FastBitmap = new FastBitmap(img.ToBitmap());
         }
     }
 }

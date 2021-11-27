@@ -76,6 +76,12 @@
     <Compile Include="CustomMatrixForm.Designer.cs">
       <DependentUpon>CustomMatrixForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormSelectImage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSelectImage.Designer.cs">
+      <DependentUpon>FormSelectImage.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMask3x3.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,8 +146,20 @@
     <Compile Include="PreviewWithSlider.Designer.cs">
       <DependentUpon>PreviewWithSlider.cs</DependentUpon>
     </Compile>
+    <Compile Include="PrewittForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrewittForm.Designer.cs">
+      <DependentUpon>PrewittForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectFormForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectFormForm.Designer.cs">
+      <DependentUpon>SelectFormForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CustomMatrixForm.resx">
       <DependentUpon>CustomMatrixForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -175,6 +193,9 @@
     <EmbeddedResource Include="PreviewWithSlider.resx">
       <DependentUpon>PreviewWithSlider.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PrewittForm.resx">
+      <DependentUpon>PrewittForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -185,6 +206,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SelectFormForm.resx">
+      <DependentUpon>SelectFormForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

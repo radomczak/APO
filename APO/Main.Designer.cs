@@ -61,11 +61,16 @@ namespace APO
             this.wyostrzanieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detekcjaKrawędziToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specjalnaDetekacjaKrawędziToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.medianowyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.punktoweDwuargumentoweToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aNDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xORToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.obrazToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplikujToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.medianowyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.otsuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -213,7 +218,9 @@ namespace APO
             this.operacjeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.histogramToolStripMenuItem1,
             this.jednopunktoweToolStripMenuItem,
-            this.filtryToolStripMenuItem});
+            this.filtryToolStripMenuItem,
+            this.punktoweDwuargumentoweToolStripMenuItem,
+            this.otsuToolStripMenuItem});
             this.operacjeToolStripMenuItem.Enabled = false;
             this.operacjeToolStripMenuItem.Name = "operacjeToolStripMenuItem";
             this.operacjeToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
@@ -339,6 +346,57 @@ namespace APO
             this.specjalnaDetekacjaKrawędziToolStripMenuItem.Text = "Specjalna detekacja krawędzi (Prewitt)";
             this.specjalnaDetekacjaKrawędziToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziToolStripMenuItem_Click);
             // 
+            // specjalnaDetekacjaKrawędziCannyToolStripMenuItem
+            // 
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = false;
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Name = "specjalnaDetekacjaKrawędziCannyToolStripMenuItem";
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Text = "Specjalna detekacja krawędzi (Canny)";
+            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem_Click);
+            // 
+            // medianowyToolStripMenuItem
+            // 
+            this.medianowyToolStripMenuItem.Enabled = false;
+            this.medianowyToolStripMenuItem.Name = "medianowyToolStripMenuItem";
+            this.medianowyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.medianowyToolStripMenuItem.Text = "Medianowy";
+            this.medianowyToolStripMenuItem.Click += new System.EventHandler(this.medianowyToolStripMenuItem_Click);
+            // 
+            // punktoweDwuargumentoweToolStripMenuItem
+            // 
+            this.punktoweDwuargumentoweToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aNDToolStripMenuItem,
+            this.oRToolStripMenuItem,
+            this.xORToolStripMenuItem});
+            this.punktoweDwuargumentoweToolStripMenuItem.Enabled = false;
+            this.punktoweDwuargumentoweToolStripMenuItem.Name = "punktoweDwuargumentoweToolStripMenuItem";
+            this.punktoweDwuargumentoweToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.punktoweDwuargumentoweToolStripMenuItem.Text = "Punktowe Dwuargumentowe";
+            // 
+            // aNDToolStripMenuItem
+            // 
+            this.aNDToolStripMenuItem.Enabled = false;
+            this.aNDToolStripMenuItem.Name = "aNDToolStripMenuItem";
+            this.aNDToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.aNDToolStripMenuItem.Text = "AND";
+            this.aNDToolStripMenuItem.Click += new System.EventHandler(this.aNDToolStripMenuItem_Click);
+            // 
+            // oRToolStripMenuItem
+            // 
+            this.oRToolStripMenuItem.Enabled = false;
+            this.oRToolStripMenuItem.Name = "oRToolStripMenuItem";
+            this.oRToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.oRToolStripMenuItem.Text = "OR";
+            this.oRToolStripMenuItem.Click += new System.EventHandler(this.oRToolStripMenuItem_Click);
+            // 
+            // xORToolStripMenuItem
+            // 
+            this.xORToolStripMenuItem.Enabled = false;
+            this.xORToolStripMenuItem.Name = "xORToolStripMenuItem";
+            this.xORToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.xORToolStripMenuItem.Text = "XOR";
+            this.xORToolStripMenuItem.Click += new System.EventHandler(this.xORToolStripMenuItem_Click);
+            // 
             // obrazToolStripMenuItem
             // 
             this.obrazToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -363,21 +421,13 @@ namespace APO
             this.infoToolStripMenuItem.Text = "Info";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
             // 
-            // specjalnaDetekacjaKrawędziCannyToolStripMenuItem
+            // otsuToolStripMenuItem
             // 
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = false;
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Name = "specjalnaDetekacjaKrawędziCannyToolStripMenuItem";
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Text = "Specjalna detekacja krawędzi (Canny)";
-            this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Click += new System.EventHandler(this.specjalnaDetekacjaKrawędziCannyToolStripMenuItem_Click);
-            // 
-            // medianowyToolStripMenuItem
-            // 
-            this.medianowyToolStripMenuItem.Enabled = false;
-            this.medianowyToolStripMenuItem.Name = "medianowyToolStripMenuItem";
-            this.medianowyToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
-            this.medianowyToolStripMenuItem.Text = "Medianowy";
-            this.medianowyToolStripMenuItem.Click += new System.EventHandler(this.medianowyToolStripMenuItem_Click);
+            this.otsuToolStripMenuItem.Enabled = false;
+            this.otsuToolStripMenuItem.Name = "otsuToolStripMenuItem";
+            this.otsuToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.otsuToolStripMenuItem.Text = "Otsu";
+            this.otsuToolStripMenuItem.Click += new System.EventHandler(this.otsuToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -435,6 +485,11 @@ namespace APO
         private System.Windows.Forms.ToolStripMenuItem specjalnaDetekacjaKrawędziToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem specjalnaDetekacjaKrawędziCannyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem medianowyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem punktoweDwuargumentoweToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aNDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem oRToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem xORToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem otsuToolStripMenuItem;
     }
 }
 

@@ -68,6 +68,11 @@ namespace APO
             specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = true;
             specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = true;
             medianowyToolStripMenuItem.Enabled = true;
+            punktoweDwuargumentoweToolStripMenuItem.Enabled = true;
+            aNDToolStripMenuItem.Enabled = true;
+            oRToolStripMenuItem.Enabled = true;
+            xORToolStripMenuItem.Enabled = true;
+            otsuToolStripMenuItem.Enabled = true;
         }
 
         public void DissableButtonsIfNeeded()
@@ -105,6 +110,11 @@ namespace APO
                 specjalnaDetekacjaKrawędziToolStripMenuItem.Enabled = false;
                 specjalnaDetekacjaKrawędziCannyToolStripMenuItem.Enabled = false;
                 medianowyToolStripMenuItem.Enabled = false;
+                punktoweDwuargumentoweToolStripMenuItem.Enabled = false;
+                aNDToolStripMenuItem.Enabled = false;
+                oRToolStripMenuItem.Enabled = false;
+                xORToolStripMenuItem.Enabled = false;
+                otsuToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -288,6 +298,42 @@ namespace APO
         private void medianowyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Median);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        private void aNDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectFormForm selectForm = new SelectFormForm(MdiChildren);
+            if(selectForm.ShowDialog() == DialogResult.OK)
+            {
+                ImageProcessor.ProcessImage((FormWithImage)ActiveMdiChild, selectForm.Form, ImageProcessor.Operations.AND);
+                ((FormWithImage)ActiveMdiChild).Refresh();
+            }
+        }
+
+        private void oRToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectFormForm selectForm = new SelectFormForm(MdiChildren);
+            if (selectForm.ShowDialog() == DialogResult.OK)
+            {
+                ImageProcessor.ProcessImage((FormWithImage)ActiveMdiChild, selectForm.Form, ImageProcessor.Operations.OR);
+                ((FormWithImage)ActiveMdiChild).Refresh();
+            }
+        }
+
+        private void xORToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectFormForm selectForm = new SelectFormForm(MdiChildren);
+            if (selectForm.ShowDialog() == DialogResult.OK)
+            {
+                ImageProcessor.ProcessImage((FormWithImage)ActiveMdiChild, selectForm.Form, ImageProcessor.Operations.XOR);
+                ((FormWithImage)ActiveMdiChild).Refresh();
+            }
+        }
+
+        private void otsuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Otsu);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
     }

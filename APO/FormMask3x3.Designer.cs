@@ -207,7 +207,6 @@ namespace APO
             "Stała",
             "Replikacja",
             "Odbicie",
-            "Zawinięcie",
             "Odbicie 101",
             "Przezroczystość",
             "Izolacja",

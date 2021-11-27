@@ -137,5 +137,11 @@ namespace APO
             fastBitmap.RGBtoGray();
             isMono = true;
         }
+
+        public void Resize()
+        {
+            imagePanel.Size = fastBitmap.Size;
+            ClientSize = fastBitmap.Size;
+        }
     }
 }
