@@ -776,7 +776,7 @@ namespace APO
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
 
-            CvInvoke.Threshold(img, img, 120, 255, ThresholdType.Otsu);
+            CvInvoke.Threshold(img, img, 0, 255, ThresholdType.Otsu);
 
             form.FastBitmap = new FastBitmap(img.ToBitmap());
         }
