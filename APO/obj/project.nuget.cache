@@ -1,19 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "s9A2bU3jr856kDWS/XxYWOp1LZt5UVKonb/UCsEHt/1ToIOYbueb/qcw/aDnJN3weLprC4P/wfdB8i8cJnxt8A==",
+  "dgSpecHash": "cc32szlxdH4vDhXqZQFbYm7L9pN7PYqnMNuwUhn0sKYbnjVUrUiGDURMBmjrUQlrr3S9WkZKox5Ld54M9d9rng==",
   "success": true,
-  "projectFilePath": "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\APO.csproj",
+  "projectFilePath": "C:\\Users\\user\\source\\repos\\APO\\APO\\APO.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.cv\\4.5.4.4788\\emgu.cv.4.5.4.4788.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.cv.bitmap\\4.5.4.4788\\emgu.cv.bitmap.4.5.4.4788.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.cv.runtime.windows\\4.5.4.4788\\emgu.cv.runtime.windows.4.5.4.4788.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.cv.ui\\4.5.4.4788\\emgu.cv.ui.4.5.4.4788.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x64\\19.29.30136\\emgu.runtime.windows.msvc.rt.x64.19.29.30136.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x86\\19.29.30136\\emgu.runtime.windows.msvc.rt.x86.19.29.30136.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\system.runtime\\4.3.1\\system.runtime.4.3.1.nupkg.sha512",
-    "C:\\Users\\radomczak\\.nuget\\packages\\system.runtime.interopservices.runtimeinformation\\4.3.0\\system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512"
+    "C:\\Users\\user\\.nuget\\packages\\emgu.cv\\4.5.4.4788\\emgu.cv.4.5.4.4788.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\emgu.cv.bitmap\\4.5.4.4788\\emgu.cv.bitmap.4.5.4.4788.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\emgu.cv.runtime.windows\\4.5.4.4788\\emgu.cv.runtime.windows.4.5.4.4788.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\emgu.cv.ui\\4.5.4.4788\\emgu.cv.ui.4.5.4.4788.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x64\\19.29.30136\\emgu.runtime.windows.msvc.rt.x64.19.29.30136.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x86\\19.29.30136\\emgu.runtime.windows.msvc.rt.x86.19.29.30136.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\system.runtime\\4.3.1\\system.runtime.4.3.1.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\system.runtime.interopservices.runtimeinformation\\4.3.0\\system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512"
   ],
   "logs": []
 }

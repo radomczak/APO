@@ -73,6 +73,7 @@ namespace APO
             oRToolStripMenuItem.Enabled = true;
             xORToolStripMenuItem.Enabled = true;
             otsuToolStripMenuItem.Enabled = true;
+            wododziałowaToolStripMenuItem.Enabled = true;
         }
 
         public void DissableButtonsIfNeeded()
@@ -115,6 +116,7 @@ namespace APO
                 oRToolStripMenuItem.Enabled = false;
                 xORToolStripMenuItem.Enabled = false;
                 otsuToolStripMenuItem.Enabled = false;
+                wododziałowaToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -334,6 +336,12 @@ namespace APO
         private void otsuToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Otsu);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        private void wododziałowaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Watershed);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
     }

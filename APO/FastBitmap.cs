@@ -99,7 +99,7 @@ namespace APO {
             this.stride = bitmapData.Stride / PixelBytes;
         }
 
-        public object Clone()
+        public FastBitmap Clone()
         {
             Unlock();
             FastBitmap fbmp = new FastBitmap(bitmap.Clone(new Rectangle(0, 0, width, height), format));

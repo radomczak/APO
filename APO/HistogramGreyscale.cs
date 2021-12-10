@@ -17,6 +17,7 @@ namespace APO
         public int[] HistogramTable
         {
             get { return histogramTable; }
+            set { histogramTable = value; }
         }
 
         public int Max
@@ -29,6 +30,7 @@ namespace APO
             get { return avg; }
         }
 
+        public HistogramGreyscale() { }
 
         public HistogramGreyscale(FastBitmap bmp,bool isMono)
         {

@@ -35,7 +35,7 @@ namespace APO
             this.formWithImage = form;
             this.operation = operation;
             originalImage = formWithImage.FastBitmap;
-            newImage = (FastBitmap)formWithImage.FastBitmap.Clone(); ;
+            newImage = formWithImage.FastBitmap.Clone(); ;
             graphics1 = this.panel1.CreateGraphics();
             graphics2 = this.panel2.CreateGraphics();
             swtichModeTo(operation);

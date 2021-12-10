@@ -16,7 +16,7 @@ namespace APO
     {
         public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, 
             Smooth, Sharpen, DetectEdges, SpecDetectEdgesP, SpecDetectEdgesC, Median,
-            AND, OR, XOR, Otsu
+            AND, OR, XOR, Otsu, Watershed
         };
 
         public static void ProcessImage(FormWithImage form, Operations operation)
@@ -52,6 +52,9 @@ namespace APO
                     break;
                 case Operations.Otsu:
                     Otsu(form);
+                    break;
+                case Operations.Watershed:
+                    Watershed(form);
                     break;
             }
         }
@@ -195,7 +198,7 @@ namespace APO
 
         private static FastBitmap Binarize(FormWithImage form, int value)
         {
-            FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+            FastBitmap bmp = form.FastBitmap.Clone();
 
             if (form.IsMono)
             {
@@ -238,7 +241,7 @@ namespace APO
 
         private static FastBitmap Threshold(FormWithImage form, int from, int to)
         {
-            FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+            FastBitmap bmp = form.FastBitmap.Clone();
 
             if (form.IsMono)
             {
@@ -285,7 +288,7 @@ namespace APO
 
         private static FastBitmap Posterize(FormWithImage form, int value)
         {
-            FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+            FastBitmap bmp = form.FastBitmap.Clone();
 
             int[] tab = new int[256];
             float param1 = 255.0f / (value - 1);
@@ -332,7 +335,7 @@ namespace APO
 
         private static FastBitmap StretchP1P2(FormWithImage form, int from, int to)
         {
-            FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+            FastBitmap bmp = form.FastBitmap.Clone();
             if (form.IsMono)
             {
                 int[] value = form.HistogramG.HistogramTable;
@@ -483,7 +486,7 @@ namespace APO
             if (prewittForm.ShowDialog() == DialogResult.OK)
             {
                 form.RGBtoGray();
-                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                FastBitmap bmp = form.FastBitmap.Clone();
                 bmp.Unlock();
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
                 bmp.Lock();
@@ -514,7 +517,7 @@ namespace APO
             {
                 int[] threshold = thresholdForm.GetThreshold();
                 form.RGBtoGray();
-                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                FastBitmap bmp = form.FastBitmap.Clone();
                 bmp.Unlock();
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
                 bmp.Lock();
@@ -530,7 +533,7 @@ namespace APO
             CustomMatrixForm customMatrix = new CustomMatrixForm();
             if (customMatrix.ShowDialog() == DialogResult.OK)
             {
-                FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+                FastBitmap bmp = form.FastBitmap.Clone();
                 int size = customMatrix.getSize();
                 BorderType type = customMatrix.GetBorderType();
                 bool color = !form.IsMono;
@@ -546,7 +549,7 @@ namespace APO
 
         private static void applyFilterToForm(FormMask3x3 mask, FormWithImage form)
         {
-            FastBitmap bmp = (FastBitmap)form.FastBitmap.Clone();
+            FastBitmap bmp = form.FastBitmap.Clone();
             float[,] kernel = mask.Mask;
             BorderType type = mask.BorderType;
             int i = mask.BorderConstant;
@@ -779,6 +782,66 @@ namespace APO
             CvInvoke.Threshold(img, img, 0, 255, ThresholdType.Otsu);
 
             form.FastBitmap = new FastBitmap(img.ToBitmap());
+        }
+
+        private static void Watershed(FormWithImage form)
+        {
+            FastBitmap bmp = form.FastBitmap;
+            
+            bmp.Unlock();
+            var img = bmp.Bitmap.ToImage<Rgb, byte>();  
+            var grey = bmp.Bitmap.ToImage<Gray, byte>();  
+            bmp.Lock();
+            Mat thresh = new Mat();
+            Mat distance = new Mat();
+
+            Point anchor = new Point(-1, -1);
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(3, 3), anchor);
+            
+            CvInvoke.Threshold(grey, thresh, 0, 255, ThresholdType.Otsu);
+            CvInvoke.BitwiseNot(thresh, thresh);
+            CvInvoke.DistanceTransform(thresh, distance, null, DistType.L2, 3);
+            CvInvoke.Normalize(distance, distance, 0, 255, NormType.MinMax);
+            Mat markers = new Mat();
+            CvInvoke.Threshold(distance.ToImage<Gray, byte>(), markers, 178, 255, ThresholdType.Binary);
+            CvInvoke.ConnectedComponents(markers, markers);
+            CvInvoke.Imshow("test", markers.ToImage<Gray, byte>());
+            var finalMarkers = markers.ToImage<Gray, byte>().Convert<Gray, Int32>();
+            CvInvoke.Watershed(img, finalMarkers);
+
+            
+            /*
+            var tab = new Dictionary<String, int>();
+            int p = 0;
+            for (int i = 0; i < finalMarkers.Rows; i++)
+            {
+                for (int j = 0; j < finalMarkers.Cols; j++)
+                {
+                    string x = finalMarkers.Data[i, j, 0].ToString();
+                    if(tab.ContainsKey(x))
+                    {
+                        tab[x]++;
+                    } else
+                    {
+                        tab.Add(x, 0);
+                    }
+                    
+                }
+            }
+            foreach(string x in tab.Keys)
+            {
+                Console.WriteLine("Key {" + x + "} , value : " + tab[x]);
+            }
+            */
+            Image<Gray, byte> boundaries = finalMarkers.Convert<byte>(delegate (Int32 x)
+            {
+                return (byte)(x == -1 ? 255 : 0);
+            });
+            
+            img.SetValue(new Rgb(255, 0, 0), boundaries);
+
+            form.FastBitmap = new FastBitmap(img.Mat.ToBitmap());
+            form.Resize();
         }
     }
 }

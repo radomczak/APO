@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\APO.csproj": {}
+    "C:\\Users\\user\\source\\repos\\APO\\APO\\APO.csproj": {}
   },
   "projects": {
-    "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\APO.csproj": {
+    "C:\\Users\\user\\source\\repos\\APO\\APO\\APO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\APO.csproj",
+        "projectUniqueName": "C:\\Users\\user\\source\\repos\\APO\\APO\\APO.csproj",
         "projectName": "APO",
-        "projectPath": "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\APO.csproj",
-        "packagesPath": "C:\\Users\\radomczak\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\radomczak\\source\\repos\\APO\\APO\\obj\\",
+        "projectPath": "C:\\Users\\user\\source\\repos\\APO\\APO\\APO.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\source\\repos\\APO\\APO\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\radomczak\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
