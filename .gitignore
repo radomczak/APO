@@ -1,5 +1,6 @@
 APO/bin/
-APO/object/
+APO/obj/
 APO/Properties/
 APO/App.config
 APO/APO.csproj
+/.vs
