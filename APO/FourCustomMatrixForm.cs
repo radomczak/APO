@@ -12,14 +12,14 @@ using System.Windows.Forms;
 
 namespace APO
 {
-    public partial class CustomMatrixForm : Form
+    public partial class FourCustomMatrixForm : Form
     {
         private int matrixSize;
         private float[,] kernel;
         private BorderType borderType;
         private int borderConstant;
 
-        public CustomMatrixForm()
+        public FourCustomMatrixForm()
         {
             InitializeComponent();
         }
@@ -73,17 +73,6 @@ namespace APO
             Box20.Visible = true;
             Box21.Visible = true;
             Box22.Visible = true;
-            /*
-            Box00.Text = "1";
-            Box01.Text = "1";
-            Box02.Text = "1";
-            Box10.Text = "1";
-            Box11.Text = "1";
-            Box12.Text = "1";
-            Box20.Text = "1";
-            Box21.Text = "1";
-            Box22.Text = "1";
-            */
         }
         private void Prepare5x5()
         {
@@ -113,34 +102,6 @@ namespace APO
             Box42.Visible = true;
             Box43.Visible = true;
             Box44.Visible = true;
-
-            /*
-            Box00.Text = "1";
-            Box01.Text = "1";
-            Box02.Text = "1";
-            Box03.Text = "1";
-            Box04.Text = "1";
-            Box10.Text = "1";
-            Box11.Text = "1";
-            Box12.Text = "1";
-            Box13.Text = "1";
-            Box14.Text = "1";
-            Box20.Text = "1";
-            Box21.Text = "1";
-            Box22.Text = "1";
-            Box23.Text = "1";
-            Box24.Text = "1";
-            Box30.Text = "1";
-            Box31.Text = "1";
-            Box32.Text = "1";
-            Box33.Text = "1";
-            Box34.Text = "1";
-            Box40.Text = "1";
-            Box41.Text = "1";
-            Box42.Text = "1";
-            Box43.Text = "1";
-            Box44.Text = "1";
-            */
         }
         private void Prepare7x7()
         {
@@ -194,58 +155,6 @@ namespace APO
             Box64.Visible = true;
             Box65.Visible = true;
             Box66.Visible = true;
-
-            /*
-            Box00.Text = "1";
-            Box01.Text = "1";
-            Box02.Text = "1";
-            Box03.Text = "1";
-            Box04.Text = "1";
-            Box05.Text = "1";
-            Box06.Text = "1";
-            Box10.Text = "1";
-            Box11.Text = "1";
-            Box12.Text = "1";
-            Box13.Text = "1";
-            Box14.Text = "1";
-            Box15.Text = "1";
-            Box16.Text = "1";
-            Box20.Text = "1";
-            Box21.Text = "1";
-            Box22.Text = "1";
-            Box23.Text = "1";
-            Box24.Text = "1";
-            Box25.Text = "1";
-            Box26.Text = "1";
-            Box30.Text = "1";
-            Box31.Text = "1";
-            Box32.Text = "1";
-            Box33.Text = "1";
-            Box34.Text = "1";
-            Box35.Text = "1";
-            Box36.Text = "1";
-            Box40.Text = "1";
-            Box41.Text = "1";
-            Box42.Text = "1";
-            Box43.Text = "1";
-            Box44.Text = "1";
-            Box45.Text = "1";
-            Box46.Text = "1";
-            Box50.Text = "1";
-            Box51.Text = "1";
-            Box52.Text = "1";
-            Box53.Text = "1";
-            Box54.Text = "1";
-            Box55.Text = "1";
-            Box56.Text = "1";
-            Box60.Text = "1";
-            Box61.Text = "1";
-            Box62.Text = "1";
-            Box63.Text = "1";
-            Box64.Text = "1";
-            Box65.Text = "1";
-            Box66.Text = "1";
-            */
         }
         private void Prepare9x9()
         {
@@ -332,91 +241,6 @@ namespace APO
             Box86.Visible = true;
             Box87.Visible = true;
             Box88.Visible = true;
-
-            /*
-            Box00.Text = "1";
-            Box01.Text = "1";
-            Box02.Text = "1";
-            Box03.Text = "1";
-            Box04.Text = "1";
-            Box05.Text = "1";
-            Box06.Text = "1";
-            Box07.Text = "1";
-            Box08.Text = "1";
-            Box10.Text = "1";
-            Box11.Text = "1";
-            Box12.Text = "1";
-            Box13.Text = "1";
-            Box14.Text = "1";
-            Box15.Text = "1";
-            Box16.Text = "1";
-            Box17.Text = "1";
-            Box18.Text = "1";
-            Box20.Text = "1";
-            Box21.Text = "1";
-            Box22.Text = "1";
-            Box23.Text = "1";
-            Box24.Text = "1";
-            Box25.Text = "1";
-            Box26.Text = "1";
-            Box27.Text = "1";
-            Box28.Text = "1";
-            Box30.Text = "1";
-            Box30.Text = "1";
-            Box31.Text = "1";
-            Box32.Text = "1";
-            Box33.Text = "1";
-            Box34.Text = "1";
-            Box35.Text = "1";
-            Box36.Text = "1";
-            Box37.Text = "1";
-            Box38.Text = "1";
-            Box40.Text = "1";
-            Box41.Text = "1";
-            Box42.Text = "1";
-            Box43.Text = "1";
-            Box44.Text = "1";
-            Box45.Text = "1";
-            Box46.Text = "1";
-            Box47.Text = "1";
-            Box48.Text = "1";
-            Box50.Text = "1";
-            Box51.Text = "1";
-            Box52.Text = "1";
-            Box53.Text = "1";
-            Box54.Text = "1";
-            Box55.Text = "1";
-            Box56.Text = "1";
-            Box57.Text = "1";
-            Box58.Text = "1";
-            Box60.Text = "1";
-            Box61.Text = "1";
-            Box62.Text = "1";
-            Box63.Text = "1";
-            Box64.Text = "1";
-            Box65.Text = "1";
-            Box66.Text = "1";
-            Box67.Text = "1";
-            Box68.Text = "1";
-            Box70.Text = "1";
-            Box71.Text = "1";
-            Box72.Text = "1";
-            Box73.Text = "1";
-            Box74.Text = "1";
-            Box75.Text = "1";
-            Box76.Text = "1";
-            Box77.Text = "1";
-            Box78.Text = "1";
-            Box80.Text = "1";
-            Box81.Text = "1";
-            Box82.Text = "1";
-            Box83.Text = "1";
-            Box84.Text = "1";
-            Box85.Text = "1";
-            Box86.Text = "1";
-            Box87.Text = "1";
-            Box88.Text = "1";
-            */
         }
 
         private void disableMatrix()

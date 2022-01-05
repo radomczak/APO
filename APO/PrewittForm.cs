@@ -12,17 +12,26 @@ using System.Windows.Forms;
 
 namespace APO
 {
+    /*
+     * Formularz do wybrania metody krawędziowej i maski do operacji detekcji krawędzi. Zawiera:
+     * Dwa zestawy pól tekstowych ułozonych w kwadrat do masek
+     * Pole comboBox do wyboru metody krawędziowwej
+     */
     public partial class PrewittForm : Form
     {
+        //Opcje (Maski) możliwe do wybrania. Ostatnia opcja jest określona dla wszelkich innych przypadków poza wybranymi opcjami
         private enum Options
         {
             Custom, Prewitt1, Prewitt2, Prewitt3, Prewitt4, Prewitt5, Prewitt6, Prewitt7, Prewitt8, Undefined
         }
+        //Tablice przechowujące maski
         private float[,] mask1;
         private float[,] mask2;
+        //Zmienna przechowująca typ metody krawędziowej. Zmienna borderConstant zawiera kolor wybrany w przypadku, gdy metoda krawędziowa jest stała
         private BorderType borderType;
         private int borderConstant;
 
+        //Gettery
         public BorderType BorderType
         {
             get { return borderType; }
@@ -41,6 +50,7 @@ namespace APO
             get { return mask2; }
         }
 
+        //Konstruktor, inicjuje tablice dla masek
         public PrewittForm()
         {
             mask1 = new float[3, 3];
@@ -48,6 +58,7 @@ namespace APO
             InitializeComponent();
         }
 
+        //Funckje, która zlicza wartości i wprowadza je do tablica, uprzednio konwertując tekst z pól tekstowych na liczbę
         private void Recalculate()
         {
             mask1[0, 0] = ParseOrZero(textBox100.Text);
@@ -71,6 +82,7 @@ namespace APO
             mask2[2, 2] = ParseOrZero(textBox222.Text);
         }
 
+        //Funckja do konwersji tekstu na wartość typu float. W przypadku błędu konwersjii, zwracana jest wartość 0
         private float ParseOrZero(string s)
         {
             if (s.Length > 0)
@@ -86,6 +98,9 @@ namespace APO
             else return 0;
         }
 
+        //Funckja ustawiająca odpowiednią konfigurację maski dla wybranej opcji.
+        //Wybranie opcji powoduję włączenie / wyłączenie odpowiednich pól i wstawienie do nich wartości odpowiedniej dla tej opcji
+        //Po ustawieniu maski, następuję przeliczenie ponownie wartości masek w tablicach
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int opt = this.comboBox1.SelectedIndex;
@@ -203,6 +218,7 @@ namespace APO
             Recalculate();
         }
 
+        //Jak funkcja powyżej tylko dla drugiej maski.
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             int opt = this.comboBox2.SelectedIndex;
@@ -320,6 +336,7 @@ namespace APO
             Recalculate();
         }
 
+        //Zmienia wartość zmiennej borderType w zalezności od wybranej metody krawędziowej w formularzu
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             int x = comboBox3.SelectedIndex;
@@ -354,6 +371,7 @@ namespace APO
             }
         }
 
+        //Zwraca opcję z indeksu użytego w kontrolce comboBox w której znajdują się wszystkie dostepne maski do wyboru
         private Options getOptionFromIndex(int option)
         {
             switch (option)
@@ -381,6 +399,7 @@ namespace APO
             }
         }
 
+        //Wyłączenie pól tekstowych(zablokowanie wstawiania danych) dla maski1
         private void disableMatrix1()
         {
             textBox100.Enabled = false;
@@ -395,6 +414,7 @@ namespace APO
             textBox122.Enabled = false;
         }
 
+        //Wyłączenie pól tekstowych(zablokowanie wstawiania danych) dla maski2
         private void disableMatrix2()
         {
             textBox200.Enabled = false;
@@ -409,6 +429,7 @@ namespace APO
             textBox222.Enabled = false;
         }
 
+        //Po zatwierdzeniu, po raz ostatni następuje ponowne przeliczenie wartości masek w tablicach
         private void confirmButton_Click(object sender, EventArgs e)
         {
             Recalculate();

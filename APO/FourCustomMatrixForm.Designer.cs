@@ -1,7 +1,7 @@
 ﻿
 namespace APO
 {
-    partial class CustomMatrixForm
+    partial class FourCustomMatrixForm
     {
         /// <summary>
         /// Required designer variable.
@@ -906,7 +906,7 @@ namespace APO
             this.label2.TabIndex = 85;
             this.label2.Text = "Metoda krawędzi";
             // 
-            // CustomMatrixForm
+            // FourCustomMatrixForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -997,8 +997,8 @@ namespace APO
             this.Controls.Add(this.Box02);
             this.Controls.Add(this.Box01);
             this.Controls.Add(this.Box00);
-            this.Name = "CustomMatrixForm";
-            this.Text = "CustomMatrixForm";
+            this.Name = "FourCustomMatrixForm";
+            this.Text = "FourCustomMatrixForm";
             this.ResumeLayout(false);
             this.PerformLayout();
 

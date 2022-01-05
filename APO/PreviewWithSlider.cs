@@ -10,10 +10,14 @@ using System.Windows.Forms;
 
 namespace APO
 {
+    //Formularz do wykonania kilku operacji, z wykorzystaniem podglądu obrazu wynikowego.
+    ////Formularz zawiera kilka nakładajacych się na siebie kontrolek, które są widoczne w zależności od wybranej operacji
     public partial class PreviewWithSlider : Form
     {
+        //Możliwe operacje
         public enum Operations { Binarization, Thresholding, Posterize, StretchP1P2, Canny };
 
+        //Zmienne do przechowywania obrazów, ich danych i wybranej operacji
         private FormWithImage formWithImage;
         private FastBitmap originalImage;
         private FastBitmap newImage;
@@ -21,6 +25,7 @@ namespace APO
         private Graphics graphics2;
         private Operations operation;
 
+        //Getter
         public FastBitmap NewImage
         {
             get
@@ -29,6 +34,7 @@ namespace APO
             }
         }
 
+        //Kontruktor. Klonuje przekazyny obraz dla podglądu i uaktywnia odpowiednie kontrolki dla przekazanej operacji
         public PreviewWithSlider(FormWithImage form, Operations operation)
         {
             InitializeComponent();
@@ -42,6 +48,7 @@ namespace APO
 
         }
 
+        //Uaktywnia odpowiednie kontrolki dla przekazanej operacji
         private void swtichModeTo(Operations operation)
         {
             switch (operation)
@@ -90,6 +97,8 @@ namespace APO
             }
         }
 
+
+        //Funckje obsługujące kontrolki i informację wyświetlajace się na formularzu (grafiki i stopień / poziom / zakres)
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             label1.Text = trackBar1.Value.ToString();
@@ -114,11 +123,14 @@ namespace APO
             this.Refresh();
         }
 
+        //Zamknięcie formularza (anulowanie operacji)
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        //Po potwierdzeniu wykonania operacji, zostaje wysłane żądanie przetworzenia obrazu do klasy ImageProcessor,
+        //gdzie po przetworzeniu obraz jest zwracany i jest tworzony nowy obraz wynikowy
         private void button1_Click(object sender, EventArgs e)
         {
             int value;
@@ -146,6 +158,7 @@ namespace APO
             }
         }
 
+        //Do wygenerowania podglądu, każda zmiana na sukwaku wymagane przetworzenie obrazu przez klase ImageProcessor
         private void fromTrackBar_MouseUp(object sender, MouseEventArgs e)
         {
             int from = fromTrackBar.Value;
@@ -157,6 +170,7 @@ namespace APO
             this.Refresh();
         }
 
+        //Do wygenerowania podglądu, każda zmiana na suwaku wymagane przetworzenie obrazu przez klase ImageProcessor
         private void toTrackBar_MouseUp(object sender, MouseEventArgs e)
         {
             int to = toTrackBar.Value;
@@ -170,6 +184,8 @@ namespace APO
             this.Refresh();
         }
 
+        //Obsługa reszty zdarzeń kontrolek w formularzu, zapewniająca poprawne zmienianie się inforamcji na formularzu, które widzi użytkownik
+        //Zmiana wartości na suwakach również wywołuje klasę ImageProcessor w celu wygenerowania podglądu
         private void fromTrackBar_ValueChanged(object sender, EventArgs e)
         {
             fromLabel.Text = fromTrackBar.Value.ToString();
@@ -206,6 +222,7 @@ namespace APO
             posterize();
         }
 
+        //Podgląd dla operacji posteryzacji
         private void posterize()
         {
             int value = trackBar2.Value;

@@ -29,10 +29,8 @@ C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.CoreCompileInpu
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.CopyComplete
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.exe
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.pdb
-C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.AssemblyReference.cache
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetThresholdForm.resources
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.GetMatrixSizeForm.resources
-C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.CustomMatrixForm.resources
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.PrewittForm.resources
 C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.SelectFormForm.resources
 C:\Users\user\source\repos\APO\APO\bin\x64\Debug\APO.exe.config
@@ -72,3 +70,10 @@ C:\Users\user\source\repos\APO\APO\obj\x64\Debug\APO.csproj.CoreCompileInputs.ca
 C:\Users\user\source\repos\APO\APO\obj\x64\Debug\APO.csproj.CopyComplete
 C:\Users\user\source\repos\APO\APO\obj\x64\Debug\APO.exe
 C:\Users\user\source\repos\APO\APO\obj\x64\Debug\APO.pdb
+C:\Users\radomczak\source\repos\APO\APO\bin\x64\Debug\APO.exe.manifest
+C:\Users\radomczak\source\repos\APO\APO\bin\x64\Debug\APO.application
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.exe.manifest
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.application
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.csproj.AssemblyReference.cache
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.FourCustomMatrixForm.resources
+C:\Users\radomczak\source\repos\APO\APO\obj\x64\Debug\APO.FormCustomMask.resources

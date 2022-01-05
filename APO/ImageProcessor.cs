@@ -12,13 +12,17 @@ using Emgu.CV.CvEnum;
 
 namespace APO
 {
+    //Klasa która obsługuję większość jeżeli nie wszystkie żądania, przetworzenia obrazu dla przekazanej operacji.
     class ImageProcessor
     {
+        //Operacje obsługiwane przez tę klase
         public enum Operations { Stretch, Equalize, Negation, Binarization, Thresholding, Posterize, StretchP1P2, 
             Smooth, Sharpen, DetectEdges, SpecDetectEdgesP, SpecDetectEdgesC, Median,
-            AND, OR, XOR, Otsu, Watershed
+            AND, OR, XOR, Otsu, Watershed,
+            Erode, Dilate
         };
 
+        //Metoda przetwarzania pojedyńczego obrazu z użyciem wybranej operacji
         public static void ProcessImage(FormWithImage form, Operations operation)
         {
             switch(operation)
@@ -56,9 +60,14 @@ namespace APO
                 case Operations.Watershed:
                     Watershed(form);
                     break;
+                case Operations.Erode:
+                case Operations.Dilate:
+                    BinaryOperation(form, operation);
+                    break;
             }
         }
 
+        //Metoda przetwarzania obrazu z użyciem wybranej operacji i drugiego obrazu. Operacje dwuargumentowe
         public static void ProcessImage(FormWithImage form1, FormWithImage form2, Operations operation)
         {
             switch (operation)
@@ -74,6 +83,8 @@ namespace APO
                     break;
             }
         }
+
+        //Do przetwarzania obrazów za pomocą metod, które wymagają pewnych wartości progów. Metoda zwraca obraz wynikowy
         public static FastBitmap ProcessAndReturnImage(FormWithImage form, Operations operation, int value)
         {
             FastBitmap fastBitmap = null;
@@ -89,6 +100,7 @@ namespace APO
             return fastBitmap;
         }
 
+        //Do przetwarzania obrazów za pomocą metod, które wymagają pewnych wartości progów od do. Metoda zwraca obraz wynikowy
         public static FastBitmap ProcessAndReturnImage(FormWithImage form, Operations operation, int from, int to)
         {
             FastBitmap fastBitmap = null;
@@ -103,14 +115,20 @@ namespace APO
             }
             return fastBitmap;
         }
+
+        //Rozciąganie histogramu obrazu
         private static void Stretch(FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap;
-            if (form.IsMono)
+            if (form.IsMono)  
             {
+                //Dla obrazów monochromatycznych jest tworzona jest tworzona jedna tabela do przechowywania tabeli LUT tego obrazu.
+                //Następnie używając tej tabeli program wywołuję metodę stretchCalculateLUT, która zwróci przetworzoną tablicę.
                 int[] value = form.HistogramG.HistogramTable;
                 int[] LUTvalue = stretchCalculateLUT(value);
 
+                //Po przetworzeniu, wartości kolorów poszczególnych pixeli w obrazie są nadpisywane z użyciem nowej rozciągniętej tabeli LUT
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -123,6 +141,7 @@ namespace APO
             }
             else
             {
+                //Dla obrazów kolorowych jest tak podobnie tylko, operacje i zmienne są powtórzone dodatkowo dwa razy przez wzgląd na 3 kanały obrazów kolorowych (R,G,B)
                 int[] red = form.HistogramRGB.HistogramTableR;
                 int[] green = form.HistogramRGB.HistogramTableG;
                 int[] blue = form.HistogramRGB.HistogramTableB;
@@ -130,6 +149,7 @@ namespace APO
                 int[] LUTgreen = stretchCalculateLUT(green);
                 int[] LUTblue = stretchCalculateLUT(blue);
 
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -142,15 +162,20 @@ namespace APO
             }
         }
 
+        //Wyrównanie histogramu obrazu
         private static void EqualizeHistogram(FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap;
             int bmpSize = bmp.Size.Height * bmp.Size.Width;
             if (form.IsMono)
             {
+                //Dla obrazów monochromatycznych jest tworzona jest tworzona jedna tabela do przechowywania tabeli LUT tego obrazu.
+                //Następnie używając tej tabeli program wywołuję metodę equalizeCalculateLUT, która zwróci przetworzoną tablicę.
                 int[] value = form.HistogramG.HistogramTable;
                 int[] LUTvalue = equalizeCalculateLUT(value, bmpSize);
 
+                //Po przetworzeniu, wartości kolorów poszczególnych pixeli w obrazie są nadpisywane z użyciem nowej wyrównanej tabeli LUT
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -163,6 +188,7 @@ namespace APO
             }
             else
             {
+                //Dla obrazów kolorowych jest tak podobnie tylko, operacje i zmienne są powtórzone dodatkowo dwa razy przez wzgląd na 3 kanały obrazów kolorowych (R,G,B)
                 int[] red = form.HistogramRGB.HistogramTableR;
                 int[] green = form.HistogramRGB.HistogramTableG;
                 int[] blue = form.HistogramRGB.HistogramTableB;
@@ -170,6 +196,7 @@ namespace APO
                 int[] LUTgreen = equalizeCalculateLUT(green, bmpSize);
                 int[] LUTblue = equalizeCalculateLUT(blue, bmpSize);
 
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -182,13 +209,17 @@ namespace APO
             }
         }
 
+        //Negacja obrazu
         private static void Negation(FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap;
+            
+            //Dwie pętle for do iracji po pixelach obrazu
             for (int i = 0; i < bmp.Size.Width; ++i)
             {
                 for (int j = 0; j < bmp.Size.Height; ++j)
                 {
+                    //Negacja odbywa się przez odwrócenie wartości kolorów poszczególnych pixeli.
                     Color pixel = bmp[i, j];
                     Color newPixel = Color.FromArgb(255 - pixel.R, 255 - pixel.G, 255 - pixel.B);
                     bmp[i, j] = newPixel;
@@ -196,19 +227,24 @@ namespace APO
             }
         }
 
+        //Binaryzacja obrazu, z zadanym progiem
         private static FastBitmap Binarize(FormWithImage form, int value)
         {
+            //Obraz jest sklonowany, gdyż funkcja zwraca przetworzony obraz bez modyfikacji pierwotnego
             FastBitmap bmp = form.FastBitmap.Clone();
 
             if (form.IsMono)
             {
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
                     {
+                        //Wartości pixeli poniżej danego progu są zerowane, a pozostałe są maksymalizowane
                         int pixelR = bmp[i, j].R;
                         if (pixelR <= value) pixelR = 0;
                         else pixelR = 255;
+                        //Nowe wartości pixeli zostają przypisane do sklonowanego obrazu
                         Color newPixel = Color.FromArgb(pixelR, pixelR, pixelR);
                         bmp[i, j] = newPixel;
                     }
@@ -216,10 +252,12 @@ namespace APO
             }
             else
             {
+                //Dla obrazów kolorowych proces jest ten sam z różnicą, że obraz zostaje najpierw zamieniony na monochromatyczny.
                 int R;
                 int G;
                 int B;
                 int v;
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -227,6 +265,7 @@ namespace APO
                         R = bmp[i, j].R;
                         G = bmp[i, j].G;
                         B = bmp[i, j].B;
+                        //Wylcizenie nowej wartości pixela, używając poniższych wag dla odpowiednich kanałów, tak by obraz finalnie stał się monochromatyczny
                         v = (int)((double)R * 0.3d + (double)G * 0.6d + (double)B * 0.1d);
                         if (v <= value) v = 0;
                         else v = 255;
@@ -239,17 +278,22 @@ namespace APO
             return bmp;
         }
 
+        //Progowanie obrazu
         private static FastBitmap Threshold(FormWithImage form, int from, int to)
         {
+            //Obraz jest sklonowany, gdyż funkcja zwraca przetworzony obraz bez modyfikacji pierwotnego
             FastBitmap bmp = form.FastBitmap.Clone();
 
             if (form.IsMono)
             {
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
                     {
+                        //Wartość koloru czerwonego dla obecnego pixela
                         int pixelR = bmp[i, j].R;
+                        //Wartości znajdująca się pomiędzy wybranym progiem min i max jest zachowywana a pozostałe są zerowane i nadpisywane
                         if (pixelR < from || pixelR > to)
                         {
                             pixelR = 0;
@@ -261,10 +305,13 @@ namespace APO
             }
             else
             {
+                //Dla obrazów kolorowych proces jest ten sam z różnicą, że obraz zostaje najpierw zamieniony na monochromatyczny.
                 int R;
                 int G;
                 int B;
                 int v;
+
+                //Dwie pętle for do iracji po pixelach obrazu
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
@@ -272,6 +319,7 @@ namespace APO
                         R = bmp[i, j].R;
                         G = bmp[i, j].G;
                         B = bmp[i, j].B;
+                        //Wylcizenie nowej wartości pixela, używając poniższych wag dla odpowiednich kanałów, tak by obraz finalnie stał się monochromatyczny
                         v = (int)((double)R * 0.3d + (double)G * 0.6d + (double)B * 0.1d);
                         if (v < from || v > to)
                         {
@@ -286,18 +334,24 @@ namespace APO
             return bmp;
         }
 
+        //Posteryzacja obrazu
         private static FastBitmap Posterize(FormWithImage form, int value)
         {
+            //Obraz jest sklonowany, gdyż funkcja zwraca przetworzony obraz bez modyfikacji pierwotnego
             FastBitmap bmp = form.FastBitmap.Clone();
-
+            //Zmienna na nową tablice LUT
             int[] tab = new int[256];
+            //Parametry potrzebne do posteryzacji
             float param1 = 255.0f / (value - 1);
             float param2 = 256.0f / (value);
+
+            //Fla każdegopoziomu szarości jest wyznaczana nowa wartość. Tworzenie nowej tablicy LUT
             for (int i = 0; i < 256; ++i)
             {
                 tab[i] = (int)((int)(i / param2) * param1);
             }
 
+            //Przypisanie tablicy LUT. W przypadku obrazu RGB jest on najpierw konwertowany na monochromatyczny
             if (form.IsMono)
             {
                 for (int i = 0; i < bmp.Size.Width; ++i)
@@ -333,18 +387,21 @@ namespace APO
             return bmp;
         }
 
+        //Rozciąganie z progami
         private static FastBitmap StretchP1P2(FormWithImage form, int from, int to)
         {
+            //Obraz jest sklonowany, gdyż funkcja zwraca przetworzony obraz bez modyfikacji pierwotnego
             FastBitmap bmp = form.FastBitmap.Clone();
             if (form.IsMono)
             {
-                int[] value = form.HistogramG.HistogramTable;
-                int[] LUTvalue = stretchP1P2CalculateLUT(value, from, to);
+                //Wyznaczenie nowej tablicy LUT wedle progów
+                int[] LUTvalue = stretchP1P2CalculateLUT( from, to);
 
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
                     {
+                        //Nadpisanie wartości pixeli, wedle nowej tablicy LUT
                         int pixelR = bmp[i, j].R;
                         Color newPixel = Color.FromArgb(LUTvalue[pixelR], LUTvalue[pixelR], LUTvalue[pixelR]);
                         bmp[i, j] = newPixel;
@@ -353,17 +410,16 @@ namespace APO
             }
             else
             {
-                int[] red = form.HistogramRGB.HistogramTableR;
-                int[] green = form.HistogramRGB.HistogramTableG;
-                int[] blue = form.HistogramRGB.HistogramTableB;
-                int[] LUTred = stretchP1P2CalculateLUT(red, from, to);
-                int[] LUTgreen = stretchP1P2CalculateLUT(green, from, to);
-                int[] LUTblue = stretchP1P2CalculateLUT(blue, from, to);
+                //Wyznaczenie nowych tablic LUT wedle progów
+                int[] LUTred = stretchP1P2CalculateLUT(from, to);
+                int[] LUTgreen = stretchP1P2CalculateLUT(from, to);
+                int[] LUTblue = stretchP1P2CalculateLUT(from, to);
 
                 for (int i = 0; i < bmp.Size.Width; ++i)
                 {
                     for (int j = 0; j < bmp.Size.Height; ++j)
                     {
+                        //Nadpisanie wartości pixeli, wedle nowych tablic LUT
                         Color pixel = bmp[i, j];
                         Color newPixel = Color.FromArgb(LUTred[pixel.R], LUTgreen[pixel.G], LUTblue[pixel.B]);
                         bmp[i, j] = newPixel;
@@ -373,20 +429,23 @@ namespace APO
             return bmp;
         }
 
-
-        private static int[] stretchP1P2CalculateLUT(int[] tabLUT, int from, int to)
+        //Rozciąganie, poprzez wyznaczenie nowej tablicy LUT z wartości wyliczonymi wedle przekazych progów. Funckja zwraca wyliczoną tablicę
+        private static int[] stretchP1P2CalculateLUT(int from, int to)
         {
             int k = 256;
             int[] result = new int[k];
             double a;
-
+            //Współczynnik
             a = 255.0 / (to - from);
             for (int i = 0; i < k; i++)
             {
+                //Wartości poniżej progu od są zerowane
                 if (i < from)
                     result[i] = 0;
-                else if(i > to)
+                //Wartości powyżej progu do są maksymalizowane
+                else if (i > to)
                     result[i] = 255;
+                //Reszta wartości jest wyliczona wedle wzoru
                 else
                     result[i] = (int)(a * (i - from));
             }
@@ -394,14 +453,19 @@ namespace APO
             return result;
         }
 
+        //Roziągnięcie przekazanej tablicy LUT
         private static int[] stretchCalculateLUT(int[] tabLUT)
         {
+            //Zmienne określające całkowitą ilość kolorów, oraz najmniejszą i nawiększą wartość koloru 
             int k = 256;
             int min = 0;
             int max = 255;
+            //Tablica na wynik operacji rozciągania
             int[] result = new int[k];
+            //Współczynnik
             double a;
 
+            //Szukanie najmniejszej niezerowej wartości od lewej
             for (int i = 0; i < k; i++)
             {
                 if (tabLUT[i] != 0)
@@ -410,6 +474,8 @@ namespace APO
                     break;
                 }
             }
+
+            //Szukanie najwiekszej niezerowej wartości od prawej
             for (int i = 255; i >= 0; i--)
             {
                 if (tabLUT[i] != 0)
@@ -418,8 +484,9 @@ namespace APO
                     break;
                 }
             }
-           
+           //Wyliczenie wartości wspóczynnika
             a = 255.0 / (max - min);
+            //Wylcizenie wartości nowej tablicy wynikowej z użyciem wzoru
             for (int i = 0; i < k; i++)
             {
                 result[i] = (int)(a * (i - min));
@@ -428,12 +495,17 @@ namespace APO
             return result;
         }
 
+        //Metoda do wyrównania przekazanej tablicy. Zmienna size jest potrzebna do wzoru
         private static int[] equalizeCalculateLUT(int[] tabLUT, int size)
         {
+            //Zmienne określające całkowitą ilość kolorów, oraz najmniejszą wartość koloru 
             int k = 256;
             double min = 0;
+            //Tablica na wynikową tablicę LUT
             int[] result = new int[k];
             double sum = 0;
+
+            //Szukanie najmniejszej niezerowej wartości od lewej
             for (int i = 0; i < k; i++)
             {
                 if (tabLUT[i] != 0)
@@ -443,6 +515,7 @@ namespace APO
                 }
             }
             
+            //Wyliczenie z nowej tablicy LUT z użyciem wzoru
             for (int i = 0; i < k; i++)
             {
                 sum += tabLUT[i];
@@ -452,27 +525,39 @@ namespace APO
             return result;
         }
 
+        //Wygładzanie, używa formularza FormMask3x3 do pobrania odpowiedniej maski
+        //Funckja korzysta z uniwersalnej metody aplikacji wybranego filtru do obrazu
         private static void Smooth(FormWithImage form)
         {
             FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.Smooth);
+
+            //Gdy formularz został zamknięty z pozytywnym rezultatem 
             if (formMask.ShowDialog() == DialogResult.OK)
             {
                 applyFilterToForm(formMask, form);
             }
         }
 
+        //Wygostrzanie, używa formularza FormMask3x3 do pobrania odpowiedniej maski
+        //Funckja korzysta z uniwersalnej metody aplikacji wybranego filtru do obrazu
         private static void Sharpen(FormWithImage form)
         {
             FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.Sharpen);
+
+            //Gdy formularz został zamknięty z pozytywnym rezultatem 
             if (formMask.ShowDialog() == DialogResult.OK)
             {
                 applyFilterToForm(formMask, form);
             }
         }
 
+        //Detekcja krawędzi, używa formularza FormMask3x3 do pobrania odpowiedniej maski
+        //Funckja korzysta z uniwersalnej metody aplikacji wybranego filtru do obrazu
         private static void DetectEdges(FormWithImage form)
         {
             FormMask3x3 formMask = new FormMask3x3(FormMask3x3.Operations.DetectEdges);
+
+            //Gdy formularz został zamknięty z pozytywnym rezultatem 
             if (formMask.ShowDialog() == DialogResult.OK)
             {
                 form.RGBtoGray();
@@ -480,16 +565,20 @@ namespace APO
             }
         }
 
+        //Detekcja krawędzi z maskami Prewitta, używa formularza PrewittForm do pobrania odpowiednich mask
         private static void SpecDetectEdgesP(FormWithImage form)
         {
             PrewittForm prewittForm = new PrewittForm();
+
+            //Gdy formularz został zamknięty z pozytywnym rezultatem 
             if (prewittForm.ShowDialog() == DialogResult.OK)
             {
+                //Obraz jest konwertowany na monochromatyczny, po czym jest klonowany i zamieniony na obraz z biblioteki OpenCV
                 form.RGBtoGray();
                 FastBitmap bmp = form.FastBitmap.Clone();
-                bmp.Unlock();
+                bmp.Unlock();   //Odblokowuje obraz do edycji
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
-                bmp.Lock();
+                bmp.Lock();    //Blokuje edycje obrazu
 
                 ConvolutionKernelF kernelF1 = new ConvolutionKernelF(prewittForm.Mask1);
                 ConvolutionKernelF kernelF2 = new ConvolutionKernelF(prewittForm.Mask2);
@@ -500,8 +589,8 @@ namespace APO
                 var img1 = new Image<Gray, byte>(img.Size);
                 var img2 = new Image<Gray, byte>(img.Size);
 
-                CvInvoke.Filter2D(img, img1, kernelF1, anchor,0, type);
-                CvInvoke.Filter2D(img, img2, kernelF2, anchor,0, type);
+                CvInvoke.Filter2D(img, img1, kernelF1, anchor, 0, type);
+                CvInvoke.Filter2D(img, img2, kernelF2, anchor, 0, type);
 
                 img = img1 + img2;
                 bmp = new FastBitmap(img.ToBitmap());
@@ -530,7 +619,7 @@ namespace APO
         private static void MedianFilter(FormWithImage form)
         {
 
-            CustomMatrixForm customMatrix = new CustomMatrixForm();
+            FourCustomMatrixForm customMatrix = new FourCustomMatrixForm();
             if (customMatrix.ShowDialog() == DialogResult.OK)
             {
                 FastBitmap bmp = form.FastBitmap.Clone();
@@ -570,34 +659,6 @@ namespace APO
             }
             form.FastBitmap = bmp;
             form.Resize();
-        }
-
-        private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, bool color)
-        {
-            if(color)
-            {
-                bitmap.Unlock();
-                var img = bitmap.Bitmap.ToImage<Rgb, byte>();
-                bitmap.Lock();
-                Image<Gray, byte>[] channels = img.Split();
-                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
-                Point anchor = new Point(-1, -1);
-                CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor);
-                CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor);
-                CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor);
-                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
-                return new FastBitmap(img.ToBitmap());
-            } 
-            else
-            {
-                bitmap.Unlock();
-                var img = bitmap.Bitmap.ToImage<Gray, byte>();
-                bitmap.Lock();
-                ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
-                Point anchor = new Point(-1, -1);
-                CvInvoke.Filter2D(img, img, kernelF, anchor);
-                return new FastBitmap(img.ToBitmap());
-            }
         }
 
         private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type , bool color)
@@ -809,30 +870,7 @@ namespace APO
             var finalMarkers = markers.ToImage<Gray, byte>().Convert<Gray, Int32>();
             CvInvoke.Watershed(img, finalMarkers);
 
-            
-            /*
-            var tab = new Dictionary<String, int>();
-            int p = 0;
-            for (int i = 0; i < finalMarkers.Rows; i++)
-            {
-                for (int j = 0; j < finalMarkers.Cols; j++)
-                {
-                    string x = finalMarkers.Data[i, j, 0].ToString();
-                    if(tab.ContainsKey(x))
-                    {
-                        tab[x]++;
-                    } else
-                    {
-                        tab.Add(x, 0);
-                    }
-                    
-                }
-            }
-            foreach(string x in tab.Keys)
-            {
-                Console.WriteLine("Key {" + x + "} , value : " + tab[x]);
-            }
-            */
+
             Image<Gray, byte> boundaries = finalMarkers.Convert<byte>(delegate (Int32 x)
             {
                 return (byte)(x == -1 ? 255 : 0);
@@ -842,6 +880,46 @@ namespace APO
 
             form.FastBitmap = new FastBitmap(img.Mat.ToBitmap());
             form.Resize();
+        }
+
+        private static void BinaryOperation(FormWithImage form, Operations op)
+        {
+            FormCustomMask formCustomMask = new FormCustomMask();
+            if (formCustomMask.ShowDialog() == DialogResult.OK) {
+                FastBitmap bmp = form.FastBitmap.Clone();
+                float[,] kernel = formCustomMask.Values;
+                BorderType type = formCustomMask.BorderType;
+                int i = formCustomMask.BorderConstant;
+                bmp.RGBtoGray();
+
+                if (op.Equals(Operations.Erode))
+                    bmp = Erode(bmp, kernel, type, i);
+                else
+                    bmp = Dilate(bmp, kernel, type, i);
+                form.FastBitmap = bmp;
+                form.Resize();
+            }
+        }
+
+        private static FastBitmap Erode(FastBitmap bmp, float[,] kernel, BorderType type, int color) {
+            bmp.Unlock();
+            var img = bmp.Bitmap.ToImage<Gray, byte>();
+            bmp.Lock();
+            ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+            Point anchor = new Point(-1, -1);
+            CvInvoke.Erode(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
+            return new FastBitmap(img.ToBitmap());
+        }
+
+        private static FastBitmap Dilate(FastBitmap bmp, float[,] kernel, BorderType type, int color)
+        {
+            bmp.Unlock();
+            var img = bmp.Bitmap.ToImage<Gray, byte>();
+            bmp.Lock();
+            ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
+            Point anchor = new Point(-1, -1);
+            CvInvoke.Dilate(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
+            return new FastBitmap(img.ToBitmap());
         }
     }
 }

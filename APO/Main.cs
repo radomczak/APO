@@ -15,17 +15,22 @@ namespace APO
         public Main()
         {
             InitializeComponent();
+            // Opcje zapisu dla przetwarzanych obrazów oraz kompatibylne rozszerzenia, możliwe do wczytania przez program
             saveFileDialog1.Filter = "Obraz BMP|*.bmp|Obraz TIFF|*.tiff|Obraz PNG|*.png|Obraz JPG|*.jpg";
             openFileDialog1.Filter = "Obrazy(*.BMP;*.TIFF;*.PNG;*.JPG)|*.BMP;*.TIFF;*.PNG;*.JPG;*.JPEG|Wszystkie pliki(*.*)|*.*";
+            // Określa ten formularz jako rodzica co pozwala na wielowątkowe otwieranie innych formularzy (obrazów) wewnątrz tego.
             IsMdiContainer = true;
         }
 
+        //FUNCKJE KONTROLEK Z MENU (PASKA NARZĘDZI)
+
+        //Funckja pokazująca podstawowe informacje o programie
         private void infoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             String appInfo = "Autor: Radosław Popielarski\nGrupa: IZ07IO1\nRok: 2021/2022\nPrzedmiot: Algorytmy przetwarzania obrazów (APO)\n";
             MessageBox.Show(appInfo, "Informacje", MessageBoxButtons.OK);
         }
-
+        //Funckja pozwalająca tworząca nowy formularz zawierajacy obraz wczytany z podanej ścieżki
         private void NewImage(string filename)
         {
             FormWithImage form = new FormWithImage(filename);
@@ -34,7 +39,7 @@ namespace APO
             form.Show();
         }
 
-
+        //Po otwarciu obrazu wykorzystywana jest poniższa funkcja zezwalająca na użycie reszty przycisków i narzędzi z głównego menu
         private void EnableButtons()
         {
             zamknijToolStripMenuItem.Enabled = true;
@@ -74,8 +79,11 @@ namespace APO
             xORToolStripMenuItem.Enabled = true;
             otsuToolStripMenuItem.Enabled = true;
             wododziałowaToolStripMenuItem.Enabled = true;
+            erozjaToolStripMenuItem.Enabled = true;
+            dylacjaToolStripMenuItem.Enabled = true;
         }
 
+        // Gdy nie ma żadnego innego obrazu, ta funckja wyłącza kontrolki w menu
         public void DissableButtonsIfNeeded()
         {
             if (MdiChildren.Length == 1)
@@ -117,9 +125,12 @@ namespace APO
                 xORToolStripMenuItem.Enabled = false;
                 otsuToolStripMenuItem.Enabled = false;
                 wododziałowaToolStripMenuItem.Enabled = false;
+                erozjaToolStripMenuItem.Enabled = false;
+                dylacjaToolStripMenuItem.Enabled = false;
             }
         }
 
+        //Pokazuje okienko eksploratora windows gdzie po wskazaniu obrazku pobiera jego ścieżkę i używając funckji NewImage tworzy formularz z tym obrazem
         private void otwórzToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (DialogResult.OK == openFileDialog1.ShowDialog())
@@ -128,11 +139,7 @@ namespace APO
             }
         }
 
-        private void nowyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            NewImage("Nowy obraz");
-        }
-
+        //Zapisanie / Nadpisanie obrazu, wykorzystujące funckje Save formulrza z obrazem. W przypadku blędu jest pokazywany komunikat
         private void zapiszToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -145,6 +152,7 @@ namespace APO
             }
         }
 
+        //Zapisanie obrazu jako nowego obrazu z wybraniem rozszerzenia. Wykorzystuje funckje Save formulrza z obrazem. W przypadku blędu jest pokazywany komunikat
         private void zapiszJakoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -160,12 +168,14 @@ namespace APO
             }
         }
 
+        //Zamyka wybrany obraz bez zapisu.
         public void zamknijToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((FormWithImage)ActiveMdiChild).Close();
             DissableButtonsIfNeeded();
         }
 
+        //Zamyka wszystkie obrazy bez zapisu
         private void zamknijWszystkieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (FormWithImage form in this.MdiChildren) {
@@ -174,53 +184,62 @@ namespace APO
             DissableButtonsIfNeeded();
         }
 
+        //Zamyka wszystkie obrazy bez zapisu i zamyka aplikacje.
         private void wyjścieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             zamknijWszystkieToolStripMenuItem_Click(sender,e);
             this.Close();
         }
 
+        //Tworzy duplikat obrazu z obecnie wybranego obrazu
         private void duplikujToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewImage(ActiveMdiChild.Text);
         }
 
+        //Wyświetla formularz z histogramem monochromatyczny
         private void monoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormWithHistogramGreyscale histForm = new FormWithHistogramGreyscale(((FormWithImage)ActiveMdiChild).HistogramG, ((FormWithImage)ActiveMdiChild).Source);
             histForm.ShowDialog();
         }
 
+        //Wyświetla formularz z histogramem rbg
         private void rGBToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormWithHistogramRGB histForm = new FormWithHistogramRGB(((FormWithImage)ActiveMdiChild).HistogramRGB, ((FormWithImage)ActiveMdiChild).Source);
             histForm.ShowDialog();
         }
 
+        //Tablica LUT rgb
         private void rGBToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             FormWithLUTTableRGB LUTForm = new FormWithLUTTableRGB(((FormWithImage)ActiveMdiChild).HistogramRGB);
             LUTForm.ShowDialog();
         }
 
+        //Tablica LUT monochromatyczna
         private void greyscaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormWithLUTTableGreyscale LUTForm = new FormWithLUTTableGreyscale(((FormWithImage)ActiveMdiChild).HistogramG);
             LUTForm.ShowDialog();
         }
 
+        //Przeprowadza operację rozciągnięcia histogramu. Używa klasy ImageProcessor do przetworzenia obrazu
         private void rozciąganieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild),ImageProcessor.Operations.Stretch);
              ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Przeprowadza operację wyrównania histogramu.  Używa klasy ImageProcessor do przetworzenia obrazu
         private void wyrównanieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Equalize);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Rozciąganie histogramu z wyborem zakresu. Używa klasy PreviewWithSlider do przetworzenia obrazu oraz wyświetlenia go z podglądem
         private void ąganieHistogramuZZakresemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PreviewWithSlider previewWithSlider = new PreviewWithSlider((FormWithImage)ActiveMdiChild, PreviewWithSlider.Operations.StretchP1P2);
@@ -231,6 +250,7 @@ namespace APO
             }
         }
 
+        //Redukcja poziomów szarości histogramu z suwakiem. Używa klasy PreviewWithSlider do przetworzenia obrazu oraz wyświetlenia go z podglądem
         private void redukcjaPoziomówSzarościToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PreviewWithSlider previewWithSlider = new PreviewWithSlider((FormWithImage)ActiveMdiChild, PreviewWithSlider.Operations.Posterize);
@@ -241,6 +261,7 @@ namespace APO
             }
         }
 
+        //Progowanie obrazu. Używa klasy PreviewWithSlider do przetworzenia obrazu oraz wyświetlenia go z podglądem
         private void progToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PreviewWithSlider previewWithSlider = new PreviewWithSlider((FormWithImage)ActiveMdiChild, PreviewWithSlider.Operations.Thresholding);
@@ -251,6 +272,7 @@ namespace APO
             }
         }
 
+        //Progowanie binarne obrazu. Używa klasy PreviewWithSlider do przetworzenia obrazu oraz wyświetlenia go z podglądem
         private void progrowanieBinarneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PreviewWithSlider previewWithSlider = new PreviewWithSlider((FormWithImage)ActiveMdiChild, PreviewWithSlider.Operations.Binarization);
@@ -261,48 +283,56 @@ namespace APO
             }
         }
 
+        //Negacja obrazu. Używa klasy ImageProcessor do przetworzenia obrazu
         private void negacjaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Negation);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Wygładzanie  Używa klasy ImageProcessor do przetworzenia obrazu
         private void wygładzanieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Smooth);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Wyostrzanie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void wyostrzanieToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Sharpen);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Detekcja krawiędzi w obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void detekcjaKrawędziToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.DetectEdges);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Detekcja krawiędzi typu Prewitt na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void specjalnaDetekacjaKrawędziToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.SpecDetectEdgesP);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Detekcja krawiędzi typu Canny na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void specjalnaDetekacjaKrawędziCannyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.SpecDetectEdgesC);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Filtr medianowy na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void medianowyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Median);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Operacja dwuargumentowa typu AND na obrazie. Początkowo za pomocą formularza SelectFormForm wybiera drugi argument dla operacji AND. Używa klasy ImageProcessor do przetworzenia obrazu
         private void aNDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectFormForm selectForm = new SelectFormForm(MdiChildren);
@@ -313,6 +343,7 @@ namespace APO
             }
         }
 
+        //Operacja dwuargumentowa typu OR na obrazie. Początkowo za pomocą formularza SelectFormForm wybiera drugi argument dla operacji OR. Używa klasy ImageProcessor do przetworzenia obrazu
         private void oRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectFormForm selectForm = new SelectFormForm(MdiChildren);
@@ -323,6 +354,7 @@ namespace APO
             }
         }
 
+        //Operacja dwuargumentowa typu XOR na obrazie. Początkowo za pomocą formularza SelectFormForm wybiera drugi argument dla operacji XOR. Używa klasy ImageProcessor do przetworzenia obrazu
         private void xORToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectFormForm selectForm = new SelectFormForm(MdiChildren);
@@ -333,15 +365,31 @@ namespace APO
             }
         }
 
+        //Operacja progowania otsu na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void otsuToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Otsu);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
 
+        //Operacja segmentacji watershed na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
         private void wododziałowaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Watershed);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        //Operacja erozji na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
+        private void erozjaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Erode);
+            ((FormWithImage)ActiveMdiChild).Refresh();
+        }
+
+        //Operacja dylacji na obrazie. Używa klasy ImageProcessor do przetworzenia obrazu
+        private void dylacjaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageProcessor.ProcessImage(((FormWithImage)ActiveMdiChild), ImageProcessor.Operations.Dilate);
             ((FormWithImage)ActiveMdiChild).Refresh();
         }
     }
