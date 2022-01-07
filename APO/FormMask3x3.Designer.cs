@@ -208,7 +208,6 @@ namespace APO
             "Replikacja",
             "Odbicie",
             "Odbicie 101",
-            "Przezroczystość",
             "Izolacja",
             "Standardowa"});
             this.comboBox2.Location = new System.Drawing.Point(108, 94);

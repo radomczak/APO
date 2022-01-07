@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace APO
 {
+    //Fomluarz wykorzystany do pobrania progów od do
     public partial class GetThresholdForm : Form
     {
+        //Progi są zapisane w dwuelementowej tablicy
         private int[] threshold = new int[2];
 
         public GetThresholdForm()

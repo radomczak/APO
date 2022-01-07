@@ -13,9 +13,11 @@ namespace APO
 {
     public partial class FormCustomMask : Form
     {
+        //Zmienne do przechowania maski, metody krawędziowej oraz wygenerowanych kontrolek
         private BorderType borderType;
         private int borderConstant;
         private int matrixSize = 0;
+        //Tablica na wygenerowane kontrolki
         private TextBox[] boxes;
         private float[,] values;
         private bool generated = false;
@@ -45,35 +47,44 @@ namespace APO
             InitializeComponent();
         }
 
+        //Metoda służąca do wygenerowania określonej liczby kontrolek w kształcie kwadratu (maska) 
         private void generateButton_Click(object sender, EventArgs e)
         {
             if (matrixSize != 0)
             {
+                //W przypadku ponownej generacji, obecne kontrolki są usuwane i będą generowane nowe
                 if (generated) {
                     foreach (TextBox b in boxes) {
                         this.Controls.Remove(b);
                         b.Dispose();
                     }
                 }
+                //Wstępma pozycha pierwszej kontrolki
                 int heightToAdd = 70;
                 int widthToAdd = 15;
                 TextBox box;
+                //Inicjacja miejsca w tablicy na kontrolki
                 boxes = new TextBox[matrixSize * matrixSize];
                 
                 for (int i = 0; i < matrixSize; i++)
                 {
                     for (int j = 0; j < matrixSize; j++)
                     {
+                        //Indeks kontrolki
                         int x = i * matrixSize + j;
+
+                        //Stworzenie nowej kontrolki z określonym rozmiarem i w określonym miejscu
                         box = new TextBox();
                         box.Size = new Size(20, 20);
                         box.Location = new Point(widthToAdd, heightToAdd);
-
+                        //Dodanie kontrolki do Formularza i tablicy
                         Controls.Add(box);
                         boxes[x] = box;
 
+                        //Zwiększenie odległości kolejnej kontrolki od krawędzi (Tak by wszystkei były ułozone w wiersz)
                         widthToAdd += 25;
                     }
+                    //Przy nowym wierszu, pozycja pozioma jest resetowana a pozycja od góry jest zwiększana
                     widthToAdd = 15;
                     heightToAdd += 25;
                 }
@@ -81,6 +92,7 @@ namespace APO
             }
         }
 
+        //Zapisanie pożadanej wielkości filtru
         private void matrixSizeBox_TextChanged(object sender, EventArgs e)
         {
             int i = ParseOrZero(matrixSizeBox.Text);
@@ -88,6 +100,7 @@ namespace APO
                 matrixSize = i;
         }
 
+        //Wybór metody krawędziowej
         private void methodComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             int x = methodComboBox.SelectedIndex;
@@ -122,6 +135,7 @@ namespace APO
             }
         }
 
+        //Konwersja tekstu na zmienna liczbową typu int
         private int ParseOrZero(string s)
         {
             if (s.Length > 0)
@@ -137,6 +151,7 @@ namespace APO
             else return 0;
         }
 
+        //Potwierdzenie, które wstawia dane maski do tablicy by za pomocą gettera mogła być później użyta w programie
         private void OK_Click(object sender, EventArgs e)
         {
             if (generated)

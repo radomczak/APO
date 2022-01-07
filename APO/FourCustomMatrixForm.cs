@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 namespace APO
 {
+    //Formularz do pobrania jednej z czterech dostępnych maasek 3x3 5x5 7x7 9x9
     public partial class FourCustomMatrixForm : Form
     {
         private int matrixSize;
@@ -40,7 +41,7 @@ namespace APO
         }
 
 
-
+        //Stworzenie odpowiedniej ilości boxów dla danego rozmiaru maski
         private void InitializeMatrix()
         {
             switch(matrixSize)
@@ -61,6 +62,7 @@ namespace APO
             }
         }
 
+        //Pola dla maski 3x3
         private void Prepare3x3()
         {
             disableMatrix();
@@ -74,6 +76,8 @@ namespace APO
             Box21.Visible = true;
             Box22.Visible = true;
         }
+
+        //Pola dla maski 5x5
         private void Prepare5x5()
         {
             disableMatrix();
@@ -103,6 +107,8 @@ namespace APO
             Box43.Visible = true;
             Box44.Visible = true;
         }
+
+        //Pola dla maski 7x7
         private void Prepare7x7()
         {
             disableMatrix();
@@ -156,6 +162,8 @@ namespace APO
             Box65.Visible = true;
             Box66.Visible = true;
         }
+
+        //Pola dla maski 9x9
         private void Prepare9x9()
         {
             disableMatrix();
@@ -242,7 +250,7 @@ namespace APO
             Box87.Visible = true;
             Box88.Visible = true;
         }
-
+        //Wyłączenie wszystkich pól
         private void disableMatrix()
         {
             Box00.Visible = false;
@@ -329,6 +337,7 @@ namespace APO
             Box88.Visible = false;
         }
 
+        //Obsługa wybrania konkretnej wielkości maski
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int i = comboBox1.SelectedIndex;
@@ -350,6 +359,7 @@ namespace APO
             InitializeMatrix();
         }
 
+        //Obsługa wyboru metdoy krawędziowej
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             int x = comboBox2.SelectedIndex;
@@ -385,6 +395,7 @@ namespace APO
 
         }
 
+        //Wpisanie wartości do maski o podanym rozmiarze
         private void updateKernelForSize(int size)
         {
             switch (size)
@@ -564,12 +575,14 @@ namespace APO
             }
         }
 
+        //Potwierdzenie podania maski, przed wyjściem wpisuję dane do tablicy przechowująca maske
         private void OK_Click(object sender, EventArgs e)
         {
             kernel = new float[matrixSize, matrixSize];
             updateKernelForSize(matrixSize);
         }
 
+        //Konwersja textu na zmienna typu flaot
         private float ParseOrZero(string s)
         {
             if (s.Length > 0)
@@ -585,6 +598,7 @@ namespace APO
             else return 0;
         }
 
+        //Gettery
         public float[,] getKernel()
         {
             return kernel;

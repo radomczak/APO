@@ -580,53 +580,74 @@ namespace APO
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
                 bmp.Lock();    //Blokuje edycje obrazu
 
+                //Utworzenie obiektu dla maski, do użycia w funckji z biblioteki OpenCV
                 ConvolutionKernelF kernelF1 = new ConvolutionKernelF(prewittForm.Mask1);
                 ConvolutionKernelF kernelF2 = new ConvolutionKernelF(prewittForm.Mask2);
+               
+                //Zczytanie metody krawędziowej z formularza
                 BorderType type = prewittForm.BorderType;
+
+                //Punkt wyznaczający środek maski
                 Point anchor = new Point(-1, -1);
+
+                //Wygładzanie filtrem Gaussa
                 CvInvoke.GaussianBlur(img, img, new Size(3, 3), 0);
 
+                //Zmienne fo wykrycia krawędzi, z użcyiem pierwszzej i drugiej maski
                 var img1 = new Image<Gray, byte>(img.Size);
                 var img2 = new Image<Gray, byte>(img.Size);
 
                 CvInvoke.Filter2D(img, img1, kernelF1, anchor, 0, type);
                 CvInvoke.Filter2D(img, img2, kernelF2, anchor, 0, type);
 
+                //Złaczenie wyników i podmiana obrazu
                 img = img1 + img2;
                 bmp = new FastBitmap(img.ToBitmap());
                 form.FastBitmap = bmp;
             }
         }
 
+        //Detekcja krawędzi typu Canny, używa formularza GetThresholdForm do pobrania odpowiednich progów
         private static void SpecDetectEdgesC(FormWithImage form)
         {
 
             GetThresholdForm thresholdForm = new GetThresholdForm();
             if (thresholdForm.ShowDialog() == DialogResult.OK)
             {
+                //Pobranie progów od do
                 int[] threshold = thresholdForm.GetThreshold();
+
+                //Obraz jest konwertowany na monochromatyczny, po czym jest klonowany i zamieniony na obraz z biblioteki OpenCV
                 form.RGBtoGray();
                 FastBitmap bmp = form.FastBitmap.Clone();
                 bmp.Unlock();
                 var img = bmp.Bitmap.ToImage<Gray, byte>();
                 bmp.Lock();
+
+                //Metoda z biblioteki OpenCV przeprowadzająca pożądaną operacje z użyciem wcześniej pobranych progów
                 CvInvoke.Canny(img, img, threshold[0], threshold[1]);
                 bmp = new FastBitmap(img.ToBitmap());
                 form.FastBitmap = bmp;
             }
         }
 
+        //Metoda wykonujące filtrowanie medianowe na wybranych obrazie. Korzysta z formularza pozwalającego na wybranei czterech wielkości maski: 3x3, 5x5, 7x7 lub 9x9
         private static void MedianFilter(FormWithImage form)
         {
-
+            //Formularz do wyboru rozmiaru maski i metody krawędzioej
             FourCustomMatrixForm customMatrix = new FourCustomMatrixForm();
             if (customMatrix.ShowDialog() == DialogResult.OK)
             {
+                //Obraz klonowany by operacja w funkcji aplikującej filtr była wykonywana na kopii
                 FastBitmap bmp = form.FastBitmap.Clone();
+
+                //Zmienne pobrane z formularza
                 int size = customMatrix.getSize();
                 BorderType type = customMatrix.GetBorderType();
                 bool color = !form.IsMono;
                 int i = customMatrix.BorderConstant;
+
+                //W przypadku metody krawędziowej stałej, jest wykorzystywana przeciążona funckja z argumentem na kolor ramki
                 if (type.Equals(BorderType.Constant))
                     bmp = applyMedianBlurToFastBitmap(bmp, size, type, i, color);
                 else
@@ -636,13 +657,17 @@ namespace APO
             }
         }
 
+        //Metoda do określenia z jakimi argumentami wywołać metodę applyKernelToFastBitmap aplikująca filtr wielkości 3x3 dla danego obrazu
         private static void applyFilterToForm(FormMask3x3 mask, FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap.Clone();
+
+            //Pobranie maski i metody krawędziowej
             float[,] kernel = mask.Mask;
             BorderType type = mask.BorderType;
             int i = mask.BorderConstant;
 
+            //Rozdział na obrazy mono i rgb. W przypadku metody krawędziowej stałej, jest wykorzystywana przeciążona funckja z argumentem na kolor ramki
             if (form.IsMono)
             {
                 if (mask.BorderType.Equals(BorderType.Constant))
@@ -661,128 +686,185 @@ namespace APO
             form.Resize();
         }
 
+        //Metoda aplikująca filtr wielkości 3x3 dla danego obrazu, wersja dla metod krawędziowych innych niż stała
         private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type , bool color)
         {
             if (color)
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Rgb, byte>();
                 bitmap.Lock();
+
+                //Rozdzielenie obrazu kolorowego na 3 kanały i utworzenie zmiennych dla maski i punktu wskazującego środek maski
                 Image<Gray, byte>[] channels = img.Split();
                 ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
                 Point anchor = new Point(-1, -1);
+
+                //Aplikacja filtru i złączenie kanałów na powrót w całość
                 CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
-                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img); ]
                 return new FastBitmap(img.ToBitmap());
             }
             else
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Gray, byte>();
                 bitmap.Lock();
+
+                //utworzenie zmiennych dla maski i punktu wskazującego środek maski
                 ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
                 Point anchor = new Point(-1, -1);
+
+                //Aplikacja filtru
                 CvInvoke.Filter2D(img, img, kernelF, anchor, 0, type);
                 return new FastBitmap(img.ToBitmap());
             }
         }
 
+        //Metoda aplikująca filtr wielkości 3x3 dla danego obrazu, wersja dla metody krawędziowej stałej
         private static FastBitmap applyKernelToFastBitmap(float[,] kernel, FastBitmap bitmap, BorderType type, int i, bool color)
         {
             if (color)
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Rgb, byte>();
                 bitmap.Lock();
+
+                //Rozdzielenie obrazu kolorowego na 3 kanały i utworzenie zmiennych dla maski i punktu wskazującego środek maski
                 Image<Gray, byte>[] channels = img.Split();
                 ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
                 Point anchor = new Point(-1, -1);
+
+                //Aplikacja filtru i złączenie kanałów na powrót w całość
                 CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
                 CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki to 1 px
                 CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
-                return new FastBitmap(img.Mat.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap()); //Jest używany MAT ponieważ ramka wychodzi poza oryginalną wielkość obrazu
             }
             else
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Gray, byte>();
                 bitmap.Lock();
+
+                //Utworzenie zmiennych dla maski i punktu wskazującego środek maski
                 ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
                 Point anchor = new Point(-1, -1);
+
+                //Aplikacja filtru
                 CvInvoke.Filter2D(img, img, kernelF, anchor, 0, type);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki to 1 px
                 CvInvoke.CopyMakeBorder(img, img, 1, 1, 1, 1, type, new MCvScalar(i));
-                return new FastBitmap(img.Mat.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap()); //Jest używany MAT ponieważ ramka wychodzi poza oryginalną wielkość obrazu
             }
         }
 
+        //Filtr medianowy dla metody krawędziowej innej niż stała
         private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size,BorderType type, bool color)
         {
             int borderSize = size / 2;
             if (color)
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Rgb, byte>();
                 bitmap.Lock();
+
+                //Rozdzielenie obrazu kolorowego na 3 kanały i aplikacja filtru dla każdego z nich
                 Image<Gray, byte>[] channels = img.Split();
                 CvInvoke.MedianBlur(channels[0], channels[0], size);
                 CvInvoke.MedianBlur(channels[1], channels[1], size);
                 CvInvoke.MedianBlur(channels[2], channels[2], size);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki wyznacza zmienna borderSize
                 CvInvoke.CopyMakeBorder(channels[0], channels[0], borderSize, borderSize, borderSize, borderSize, type);
                 CvInvoke.CopyMakeBorder(channels[1], channels[1], borderSize, borderSize, borderSize, borderSize, type);
                 CvInvoke.CopyMakeBorder(channels[2], channels[2], borderSize, borderSize, borderSize, borderSize, type);
+
+                //Złączenie kanałów na powrót w całość
                 CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
-                return new FastBitmap(img.Mat.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap()); //Jest używany MAT ponieważ ramka wychodzi poza oryginalną wielkość obrazu
             }
             else
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Gray, byte>();
                 bitmap.Lock();
+
+                //Aplikacja filtru
                 CvInvoke.MedianBlur(img, img, size);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki wyznacza zmienna borderSize
                 CvInvoke.CopyMakeBorder(img, img, borderSize, borderSize, borderSize, borderSize, type);
-                return new FastBitmap(img.Mat.ToBitmap());
+                return new FastBitmap(img.Mat.ToBitmap()); //Jest używany MAT ponieważ ramka wychodzi poza oryginalną wielkość obrazu
             }
         }
 
+        //Filtr medianowy, wersja dla metdoy krawędziowej stałej, z podanym kolorem
         private static FastBitmap applyMedianBlurToFastBitmap(FastBitmap bitmap, int size, BorderType type, int i, bool color)
         {
             int borderSize = size / 2;
             if (color)
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Rgb, byte>();
                 bitmap.Lock();
+
+                //Rozdzielenie obrazu kolorowego na 3 kanały i aplikacja filtru dla każdego z nich
                 Image<Gray, byte>[] channels = img.Split();
                 CvInvoke.MedianBlur(channels[0], channels[0], size);
                 CvInvoke.MedianBlur(channels[1], channels[1], size);
                 CvInvoke.MedianBlur(channels[2], channels[2], size);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki wyznacza zmienna borderSize
                 CvInvoke.CopyMakeBorder(channels[0], channels[0], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
                 CvInvoke.CopyMakeBorder(channels[1], channels[1], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
                 CvInvoke.CopyMakeBorder(channels[2], channels[2], borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
+
+                //Złączenie kanałów na powrót w całość
                 CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
                 return new FastBitmap(img.Mat.ToBitmap());
             }
             else
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bitmap.Unlock();
                 var img = bitmap.Bitmap.ToImage<Gray, byte>();
                 bitmap.Lock();
+
+                //Aplikacja filtru
                 CvInvoke.MedianBlur(img, img, size);
+
+                //Stworzenie ramki o zadanym kolorze. Wielkość ramki wyznacza zmienna borderSize
                 CvInvoke.CopyMakeBorder(img, img, borderSize, borderSize, borderSize, borderSize, type, new MCvScalar(i));
                 return new FastBitmap(img.Mat.ToBitmap());
             }
         }
 
+        //Metoda wykonująca operację AND na dwóch obrazach
         private static void ANDOperator(FormWithImage form1, FormWithImage form2)
         {
+            //Zmienne do przechowywania dwóch obrazów
             FastBitmap bmp1 = form1.FastBitmap;
             FastBitmap bmp2 = form2.FastBitmap;
+
+            //Weryfikacja rozmiarów i zgodności obrazów
             if(form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bmp1.Unlock();
                 var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
                 bmp1.Lock();
@@ -791,17 +873,23 @@ namespace APO
                 var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
                 bmp2.Lock();
 
+                //Operacja AND, gdzie wynik operacji jest zapisywany w pierwszym argumencie operacji - obraz img1
                 CvInvoke.BitwiseAnd(img1, img2, img1);
                 form1.FastBitmap = new FastBitmap(img1.ToBitmap());
             }
         }
 
+        //Metoda wykonująca operację OR na dwóch obrazach
         private static void OROperator(FormWithImage form1, FormWithImage form2)
         {
+            //Zmienne do przechowywania dwóch obrazów
             FastBitmap bmp1 = form1.FastBitmap;
             FastBitmap bmp2 = form2.FastBitmap;
+
+            //Weryfikacja rozmiarów i zgodności obrazów
             if (form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bmp1.Unlock();
                 var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
                 bmp1.Lock();
@@ -810,17 +898,23 @@ namespace APO
                 var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
                 bmp2.Lock();
 
+                //Operacja OR, gdzie wynik operacji jest zapisywany w pierwszym argumencie operacji - obraz img1
                 CvInvoke.BitwiseOr(img1, img2, img1);
                 form1.FastBitmap = new FastBitmap(img1.ToBitmap());
             } 
         }
 
+        //Metoda wykonująca operację XOR na dwóch obrazach
         private static void XOROperator(FormWithImage form1, FormWithImage form2)
         {
+            //Zmienne do przechowywania dwóch obrazów
             FastBitmap bmp1 = form1.FastBitmap;
             FastBitmap bmp2 = form2.FastBitmap;
+
+            //Weryfikacja rozmiarów i zgodności obrazów
             if (form1.IsMono && form2.IsMono && bmp1.Size.Equals(bmp2.Size))
             {
+                //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
                 bmp1.Unlock();
                 var img1 = bmp1.Bitmap.ToImage<Gray, byte>();
                 bmp1.Lock();
@@ -829,36 +923,48 @@ namespace APO
                 var img2 = bmp2.Bitmap.ToImage<Gray, byte>();
                 bmp2.Lock();
 
+                //Operacja XOR, gdzie wynik operacji jest zapisywany w pierwszym argumencie operacji - obraz img1
                 CvInvoke.BitwiseXor(img1, img2, img1);
                 form1.FastBitmap = new FastBitmap(img1.ToBitmap());
             }
         }
+
+        //Progowanie metodą otsu
         private static void Otsu(FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap;
+
+            //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
 
+            //Wywołanie metody progowania, z podaniem typu progowania otsu
             CvInvoke.Threshold(img, img, 0, 255, ThresholdType.Otsu);
 
             form.FastBitmap = new FastBitmap(img.ToBitmap());
         }
 
+        //Metoda wododziałowa
         private static void Watershed(FormWithImage form)
         {
             FastBitmap bmp = form.FastBitmap;
             
+            //Obraz grey to monohromatyczna wersja podanego obrazu, użyta do wyznaczenia markerów dla metody watershed
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Rgb, byte>();  
             var grey = bmp.Bitmap.ToImage<Gray, byte>();  
             bmp.Lock();
+
+            //Zmienne do przechowywania wyników progowania i normalizacji
             Mat thresh = new Mat();
             Mat distance = new Mat();
 
+            //Maska i punkt środkowy
             Point anchor = new Point(-1, -1);
             Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(3, 3), anchor);
             
+            //Wyznaczenie markerów
             CvInvoke.Threshold(grey, thresh, 0, 255, ThresholdType.Otsu);
             CvInvoke.BitwiseNot(thresh, thresh);
             CvInvoke.DistanceTransform(thresh, distance, null, DistType.L2, 3);
@@ -866,58 +972,79 @@ namespace APO
             Mat markers = new Mat();
             CvInvoke.Threshold(distance.ToImage<Gray, byte>(), markers, 178, 255, ThresholdType.Binary);
             CvInvoke.ConnectedComponents(markers, markers);
-            CvInvoke.Imshow("test", markers.ToImage<Gray, byte>());
             var finalMarkers = markers.ToImage<Gray, byte>().Convert<Gray, Int32>();
+
+            //Aplikacja wyznaczonych markerów do oryginalnego obrazu
             CvInvoke.Watershed(img, finalMarkers);
 
-
+            //Zaznaczenie wykrytych krawędzi
             Image<Gray, byte> boundaries = finalMarkers.Convert<byte>(delegate (Int32 x)
             {
                 return (byte)(x == -1 ? 255 : 0);
             });
-            
+
             img.SetValue(new Rgb(255, 0, 0), boundaries);
 
             form.FastBitmap = new FastBitmap(img.Mat.ToBitmap());
             form.Resize();
         }
 
+        //Metoda do pobrania odpowiednich danych dla operacji binarnej erode lub dilate
         private static void BinaryOperation(FormWithImage form, Operations op)
         {
+            //Wywołanie formularza 
             FormCustomMask formCustomMask = new FormCustomMask();
-            if (formCustomMask.ShowDialog() == DialogResult.OK) {
+            if (formCustomMask.ShowDialog() == DialogResult.OK) 
+            {
+                //pobranie odpowiednich danych i utworzenie zmiennej dla obrazu
                 FastBitmap bmp = form.FastBitmap.Clone();
                 float[,] kernel = formCustomMask.Values;
                 BorderType type = formCustomMask.BorderType;
                 int i = formCustomMask.BorderConstant;
+
+                //Konwersja obrazu na monochromatyczny
                 bmp.RGBtoGray();
 
+                //Wywołanie odpowiedniej operacji
                 if (op.Equals(Operations.Erode))
                     bmp = Erode(bmp, kernel, type, i);
                 else
                     bmp = Dilate(bmp, kernel, type, i);
+
+                //Podmiana obrazu i odświeżenie formularza
                 form.FastBitmap = bmp;
                 form.Resize();
             }
         }
 
-        private static FastBitmap Erode(FastBitmap bmp, float[,] kernel, BorderType type, int color) {
+        private static FastBitmap Erode(FastBitmap bmp, float[,] kernel, BorderType type, int color) 
+        {
+            //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
+
+            //Maska i punkt środkowy
             ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
             Point anchor = new Point(-1, -1);
+
+            //Aplikacja maski z użyciem metody Erode
             CvInvoke.Erode(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
             return new FastBitmap(img.ToBitmap());
         }
 
         private static FastBitmap Dilate(FastBitmap bmp, float[,] kernel, BorderType type, int color)
         {
+            //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
+
+            //Maska i punkt środkowy
             ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
             Point anchor = new Point(-1, -1);
+
+            //Aplikacja maski z użyciem metody Dilate
             CvInvoke.Dilate(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
             return new FastBitmap(img.ToBitmap());
         }

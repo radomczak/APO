@@ -12,8 +12,10 @@ using System.Windows.Forms;
 
 namespace APO
 {
+    //Formularz do pobrania lub załadowania odpowiedniego filtru dla poszczególnych operacji
     public partial class FormMask3x3 : Form
     {
+        //Ioeracje i opcje masek
         public enum Operations { Smooth, Sharpen, DetectEdges, SpecDetectEdges}
         private enum Options { 
             Custom, Standard, Standard_K, Gauss, Undefined, 
@@ -22,6 +24,7 @@ namespace APO
             Prewitt1, Prewitt2, Prewitt3, Prewitt4, Prewitt5, Prewitt6, Prewitt7, Prewitt8
         }
 
+        //Zmienne do przechowywania maski, typu operacji, wpółczynnika maski i koloru i metody krawędziowej
         private float[,] mask;
         private float divisor;
         private Operations operation;
@@ -49,6 +52,7 @@ namespace APO
             get { return borderConstant; }
         }
 
+        //Kontruktor, inicjuje tablice dla maski
         public FormMask3x3(Operations operation)
         {
             this.operation = operation;
@@ -57,6 +61,7 @@ namespace APO
             AddOperationsToSelect();
         }
 
+        //Zapisanie wartości do maski i przeliczenie współczynnika
         private void Recalculate()
         {
             mask[0, 0] = ParseOrZero(textBox00.Text);
@@ -69,6 +74,7 @@ namespace APO
             mask[2, 1] = ParseOrZero(textBox21.Text);
             mask[2, 2] = ParseOrZero(textBox22.Text);
 
+            //Przeliczenie współczynnika
             if (!checkBox1.Checked)
                 divisor = Math.Max(ParseOrZero(textBoxDiv.Text), 1);
             else
@@ -94,6 +100,7 @@ namespace APO
             }
         }
 
+        //Konwersja napisu na liczbe typu float
         private float ParseOrZero(string s)
         {
             if(s.Length > 0 )
@@ -123,6 +130,7 @@ namespace APO
                Recalculate();
         }
 
+        //Wczytanie odpowiedniej maski
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int optionInt = this.comboBox1.SelectedIndex;
@@ -410,6 +418,7 @@ namespace APO
             Recalculate();
         }
 
+        //Zwrócenie odpowiednich opcji masek dla poszczególnych operacji
         private Options getOptionFromString(int option, Operations operation)
         {
             if (operation.Equals(Operations.Smooth))
@@ -496,6 +505,7 @@ namespace APO
             return Options.Undefined;
         }
 
+        //Ustawienie opcji dla poszczególnych operacji
         private void AddOperationsToSelect()
         {
             switch (operation)
@@ -543,6 +553,7 @@ namespace APO
             Recalculate();
         }
 
+        //Wyłączenie edycji maski
         private void disableMatrix()
         {
             textBox00.Enabled = false;
@@ -557,6 +568,7 @@ namespace APO
             textBox22.Enabled = false;
         }
 
+        //Wybór metody krawędziowej
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             int x = comboBox2.SelectedIndex;
@@ -580,12 +592,9 @@ namespace APO
                     borderType = BorderType.Reflect101;
                     break;
                 case 4:
-                    borderType = BorderType.Transparent;
-                    break;
-                case 5:
                     borderType = BorderType.Isolated;
                     break;
-                case 6:
+                case 5:
                     borderType = BorderType.Default;
                     break;
             }

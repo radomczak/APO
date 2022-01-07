@@ -8,6 +8,7 @@ namespace APO
 {
     public class HistogramRGB
     {
+        //Do przechowywania tablicy LUT odpowiedniego kanału
         private int[] histogramTableR = new int[256];
         private int[] histogramTableG = new int[256];
         private int[] histogramTableB = new int[256];
@@ -27,6 +28,7 @@ namespace APO
             get { return histogramTableB; }
         }
 
+        //Zlicza wystąpienia poszczególnych wartości na każdym kanale
         public HistogramRGB(FastBitmap bmp)
         {
             for (int i = 0; i < bmp.Size.Width; ++i)
@@ -40,6 +42,7 @@ namespace APO
             }
         }
 
+        //Zwraca maksymalną wykrytą wartość dla podanego kanału / koloru
         public int MaxForColor(String color)
         {
             switch(color)
