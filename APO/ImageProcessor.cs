@@ -705,7 +705,7 @@ namespace APO
                 CvInvoke.Filter2D(channels[0], channels[0], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[1], channels[1], kernelF, anchor, 0, type);
                 CvInvoke.Filter2D(channels[2], channels[2], kernelF, anchor, 0, type);
-                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img); ]
+                CvInvoke.Merge(new VectorOfMat(channels[0].Mat, channels[1].Mat, channels[2].Mat), img);
                 return new FastBitmap(img.ToBitmap());
             }
             else
