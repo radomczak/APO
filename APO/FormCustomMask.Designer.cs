@@ -35,6 +35,9 @@ namespace APO
             this.OK = new System.Windows.Forms.Button();
             this.matrixSizeBox = new System.Windows.Forms.TextBox();
             this.generateButton = new System.Windows.Forms.Button();
+            this.point = new System.Windows.Forms.Label();
+            this.pointXBox = new System.Windows.Forms.TextBox();
+            this.pointYBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label2
@@ -101,12 +104,38 @@ namespace APO
             this.generateButton.UseVisualStyleBackColor = true;
             this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
             // 
+            // point
+            // 
+            this.point.AutoSize = true;
+            this.point.Location = new System.Drawing.Point(361, 9);
+            this.point.Name = "point";
+            this.point.Size = new System.Drawing.Size(103, 13);
+            this.point.TabIndex = 93;
+            this.point.Text = "Punkt centralny (x,y)";
+            // 
+            // pointXBox
+            // 
+            this.pointXBox.Location = new System.Drawing.Point(392, 31);
+            this.pointXBox.Name = "pointXBox";
+            this.pointXBox.Size = new System.Drawing.Size(20, 20);
+            this.pointXBox.TabIndex = 94;
+            // 
+            // pointYBox
+            // 
+            this.pointYBox.Location = new System.Drawing.Point(418, 31);
+            this.pointYBox.Name = "pointYBox";
+            this.pointYBox.Size = new System.Drawing.Size(20, 20);
+            this.pointYBox.TabIndex = 95;
+            // 
             // FormCustomMask
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(387, 112);
+            this.ClientSize = new System.Drawing.Size(480, 112);
+            this.Controls.Add(this.pointYBox);
+            this.Controls.Add(this.pointXBox);
+            this.Controls.Add(this.point);
             this.Controls.Add(this.generateButton);
             this.Controls.Add(this.matrixSizeBox);
             this.Controls.Add(this.label2);
@@ -128,5 +157,8 @@ namespace APO
         private System.Windows.Forms.Button OK;
         private System.Windows.Forms.TextBox matrixSizeBox;
         private System.Windows.Forms.Button generateButton;
+        private System.Windows.Forms.Label point;
+        private System.Windows.Forms.TextBox pointXBox;
+        private System.Windows.Forms.TextBox pointYBox;
     }
 }

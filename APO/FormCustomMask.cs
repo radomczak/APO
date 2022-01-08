@@ -1,4 +1,6 @@
-﻿using Emgu.CV.CvEnum;
+﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,8 +21,11 @@ namespace APO
         private int matrixSize = 0;
         //Tablica na wygenerowane kontrolki
         private TextBox[] boxes;
-        private float[,] values;
+        private Mat mask;
         private bool generated = false;
+        //Wpółrzędne punktu centralnego
+        private Point pointC;
+        
 
         public BorderType BorderType
         {
@@ -37,9 +42,14 @@ namespace APO
             get { return matrixSize; }
         }
 
-        public float[,] Values
+        public Mat Mat
         {
-            get { return values; }
+            get { return mask; }
+        }
+
+        public Point Point
+        {
+            get { return pointC; }
         }
 
         public FormCustomMask()
@@ -156,16 +166,22 @@ namespace APO
         {
             if (generated)
             {
-                values = new float[matrixSize, matrixSize];
+                int px = ParseOrZero(pointXBox.Text);
+                int py = ParseOrZero(pointYBox.Text);
+                pointC = new Point(px, py);
+
+                mask = new Mat(matrixSize, matrixSize, DepthType.Cv8U, 1);
+                Matrix<byte> matrix = new Matrix<byte>(matrixSize, matrixSize);
                 for (int i = 0; i < matrixSize; i++)
                 {
                     for (int j = 0; j < matrixSize; j++)
                     {
                         int x = i * matrixSize + j;
-                        float value = ParseOrZero(boxes[x].Text);
-                        values[i, j] = value;
+                        byte value = (byte)ParseOrZero(boxes[x].Text);
+                        matrix.Data[i, j] = value;
                     }
                 }
+                mask.SetTo(new MCvScalar(9.0), matrix);
             }
         }
     }

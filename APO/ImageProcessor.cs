@@ -998,18 +998,19 @@ namespace APO
             {
                 //pobranie odpowiednich danych i utworzenie zmiennej dla obrazu
                 FastBitmap bmp = form.FastBitmap.Clone();
-                float[,] kernel = formCustomMask.Values;
+                Mat mat = formCustomMask.Mat;
                 BorderType type = formCustomMask.BorderType;
                 int i = formCustomMask.BorderConstant;
+                Point location = formCustomMask.Point;
 
                 //Konwersja obrazu na monochromatyczny
                 bmp.RGBtoGray();
 
                 //Wywołanie odpowiedniej operacji
                 if (op.Equals(Operations.Erode))
-                    bmp = Erode(bmp, kernel, type, i);
+                    bmp = Erode(bmp, mat,location, type, i);
                 else
-                    bmp = Dilate(bmp, kernel, type, i);
+                    bmp = Dilate(bmp, mat, location, type, i);
 
                 //Podmiana obrazu i odświeżenie formularza
                 form.FastBitmap = bmp;
@@ -1017,35 +1018,27 @@ namespace APO
             }
         }
 
-        private static FastBitmap Erode(FastBitmap bmp, float[,] kernel, BorderType type, int color) 
+        private static FastBitmap Erode(FastBitmap bmp, Mat kernel, Point location, BorderType type, int color) 
         {
             //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
 
-            //Maska i punkt środkowy
-            ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
-            Point anchor = new Point(-1, -1);
-
             //Aplikacja maski z użyciem metody Erode
-            CvInvoke.Erode(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
+            CvInvoke.Erode(img, img, kernel, location, 1, type, new MCvScalar(color));
             return new FastBitmap(img.ToBitmap());
         }
 
-        private static FastBitmap Dilate(FastBitmap bmp, float[,] kernel, BorderType type, int color)
+        private static FastBitmap Dilate(FastBitmap bmp, Mat kernel, Point location, BorderType type, int color)
         {
             //Odblokowanie obrazu do edycji, stworzenie obiektu do edycji z użyciem metod z biblioteki OpenCV i ponowne zablokowanie pierwotnego obrazu
             bmp.Unlock();
             var img = bmp.Bitmap.ToImage<Gray, byte>();
             bmp.Lock();
 
-            //Maska i punkt środkowy
-            ConvolutionKernelF kernelF = new ConvolutionKernelF(kernel);
-            Point anchor = new Point(-1, -1);
-
             //Aplikacja maski z użyciem metody Dilate
-            CvInvoke.Dilate(img, img, kernelF, anchor, 1, type, new MCvScalar(color));
+            CvInvoke.Dilate(img, img, kernel, location, 1, type, new MCvScalar(color));
             return new FastBitmap(img.ToBitmap());
         }
     }
